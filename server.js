@@ -2,17 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+require('./models/User');
+require('./models/Role');
+require('./models/Product');
+require('./models/Category');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static files for uploads
-app.use('/uploads', express.static('uploads'));
-
-// Basic route
 app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to E-Market API',
@@ -21,7 +21,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health check
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -30,18 +29,30 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Connect to MongoDB
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected to MongoDB');
+    
+    const db = mongoose.connection.db;
+    const collections = await db.listCollections().toArray();
+    const collectionNames = collections.map(c => c.name);
+    
+    const requiredCollections = ['users', 'roles', 'products', 'categories'];
+    
+    for (const collectionName of requiredCollections) {
+      if (!collectionNames.includes(collectionName)) {
+        await db.createCollection(collectionName);
+        console.log(`📦 Created collection: ${collectionName}`);
+      }
+    }
+    
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
     process.exit(1);
   }
 };
 
-// Start server
 const startServer = async () => {
   await connectDB();
   
