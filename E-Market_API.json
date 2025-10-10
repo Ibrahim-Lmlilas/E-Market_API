@@ -1,0 +1,253 @@
+{
+	"info": {
+		"_postman_id": "03627f09-4f74-42c7-b9cf-cbaded732806",
+		"name": "E-Market_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45118084",
+		"_collection_link": "https://lmlilkasbrahim.postman.co/workspace/E-Market_API~242a8476-b783-4fc9-8c0c-e5c85e5d3c56/collection/45118084-03627f09-4f74-42c7-b9cf-cbaded732806?action=share&source=collection_link&creator=45118084"
+	},
+	"item": [
+		{
+			"name": "authController",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"omar\",\n  \"lastName\": \"lmlilas\",\n  \"email\": \"omar@lmlilas.com\",\n  \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{register}}",
+							"host": [
+								"{{register}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"hakari@lmlilas.com\",\n  \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{login }}",
+							"host": [
+								"{{login }}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{logout}}",
+							"host": [
+								"{{logout}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "categoryController",
+			"item": [
+				{
+					"name": "categoriesAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{categoriesAll}}",
+							"host": [
+								"{{categoriesAll}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{categories}}68e8c4ae4e346edc0589d83c",
+							"host": [
+								"{{categories}}68e8c4ae4e346edc0589d83c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addcategories",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authTokenAdd}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"title\": \"test1 \" \n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{addcategories}}",
+							"host": [
+								"{{addcategories}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateCategory",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authTokenAdd}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"test 22 \"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{updateCategory}}68e8d1d54e346edc0589d84e",
+							"host": [
+								"{{updateCategory}}68e8d1d54e346edc0589d84e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authTokenAdd}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{deleteCategory}}68e8c4ae4e346edc0589d83c",
+							"host": [
+								"{{deleteCategory}}68e8c4ae4e346edc0589d83c"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "productController",
+			"item": [
+				{
+					"name": "productsAll",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "products",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "addproducts",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"iPhone 15 Pro\",\n  \"description\": \"Latest iPhone with A17 Pro chip and titanium design\",\n  \"price\": 12999,\n  \"stock\": 50,\n  \"category\": \"670abc123def456789\",\n  \"imageUrl\": \"https://example.com/iphone15.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{addproducts}}",
+							"host": [
+								"{{addproducts}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateProducts",
+					"request": {
+						"method": "PUT",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "deleteproduct",
+					"request": {
+						"method": "DELETE",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
