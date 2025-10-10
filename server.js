@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
@@ -22,7 +24,8 @@ app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to E-Market API',
     status: 'Server is running',
-    version: '1.0.0'
+    version: '1.0.0',
+    documentation: 'http://localhost:3000/api-docs'
   });
 });
 
@@ -33,6 +36,12 @@ app.get('/health', (req, res) => {
     uptime: process.uptime()
   });
 });
+
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'E-Market API Documentation'
+}));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
