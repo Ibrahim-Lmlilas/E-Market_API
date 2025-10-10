@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+const authRoutes = require('./routes/authRoutes');
+
 require('./models/User');
 require('./models/Role');
 require('./models/Product');
@@ -13,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ---------------------Routes--------------------------
 app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to E-Market API',
@@ -28,6 +31,11 @@ app.get('/health', (req, res) => {
     uptime: process.uptime()
   });
 });
+
+app.use('/api/auth', authRoutes);
+
+
+//----------------------------------------------------------
 
 const connectDB = async () => {
   try {

@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/Ibrahim-Lmlilas/E-Market_API#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
     "multer": "^2.0.2",
     "swagger-jsdoc": "^6.2.8",
