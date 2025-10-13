@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: () => uuidv4(),
     unique: true,
-    immutable: true, // Cannot be changed after creation
+    immutable: true, 
     index: true
   },
   firstName: {
