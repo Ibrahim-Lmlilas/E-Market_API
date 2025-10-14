@@ -27,4 +27,15 @@ router.put('/change-password', protect,validator.validate(passwordSchema), async
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+router.get('/me', protect, async (req, res) => {
+  try {
+    const controller = new profileController();
+    await controller.getProfile(req, res);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 module.exports = router;

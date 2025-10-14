@@ -74,6 +74,43 @@ class ProfileController {
   }
 }
 
+async getProfile(req, res) {
+  try {
+  
+    const user = await User.findById(req.user._id).populate('role', 'name');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+   
+    return res.status(200).json({
+      success: true,
+      message: 'Profile fetched successfully ✅',
+      user: {
+        id: user._id,
+        uuid: user.uuid,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        nickname: user.nickname,
+        email: user.email,
+        role: user.role?.name ,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server Error',
+    });
+  }
+}
+
 
 
 }
