@@ -54,7 +54,7 @@ app.use('/api/products', productRoutes);
 // in case route not found
 app.use(ResponseHandler.notFound);
 
-// in case of a server error
+// // in case of a server error
 app.use(ResponseHandler.errorHandler);
 
 
