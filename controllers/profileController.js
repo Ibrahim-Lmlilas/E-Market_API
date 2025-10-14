@@ -62,7 +62,6 @@ class ProfileController {
       return res.status(401).json({ success: false, message: 'Old password is incorrect' });
     }
 
-    // ⚠️ فقط assign لكلمة السر الجديدة، pre('save') غادي يدير hash
     user.password = newPassword;
 
     await user.save();
