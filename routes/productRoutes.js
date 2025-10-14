@@ -102,7 +102,7 @@ router.get('/:id', productController.getProductById);
  *       403:
  *         description: Forbidden (not admin)
  */
-router.post('/', protect, adminOnly, validator(productSchema), productController.createProduct);
+router.post('/', protect, adminOnly, validator.validate(productSchema), productController.createProduct);
 
 /**
  * @swagger
@@ -135,7 +135,7 @@ router.post('/', protect, adminOnly, validator(productSchema), productController
  *       404:
  *         description: Product not found
  */
-router.put('/:id', protect, adminOnly, validator(productSchema), productController.updateProduct);
+router.put('/:id', protect, adminOnly, validator.validate(productSchema), productController.updateProduct);
 
 /**
  * @swagger
