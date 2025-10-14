@@ -3,6 +3,7 @@ const router = express.Router();
 const profileController = require('../controllers/profileController');
 const { protect } = require('../middlewares/auth');
 
+
 router.put('/edit', protect, async (req, res) => {
     const controller = new profileController();
   try {
@@ -16,7 +17,7 @@ router.put('/edit', protect, async (req, res) => {
 
 router.put('/change-password', protect, async (req, res) => {
   try {
-    const controller = new ProfileController();
+    const controller = new profileController();
     await controller.changePassword(req, res);
   } catch (err) {
     console.error(err);
