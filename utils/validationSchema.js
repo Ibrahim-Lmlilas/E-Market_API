@@ -21,4 +21,4 @@ const CategorySchema = yup.object({
     title: yup.string().required('Name is required').min(3, 'Name must be at least 3 characters'),
 });
 
-module.exports = {userSchema, productSchema, CategorySchema, editCategorySchema, updateUserSchema};
+module.exports = {userSchema, productSchema, CategorySchema};

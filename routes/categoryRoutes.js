@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 const { protect, adminOnly } = require('../middlewares/auth');
-const validator = require("/middlewares/validationMiddleware");
+const validator = require("../middlewares/validationMiddleware");
 const {CategorySchema} = require('../utils/validationSchema');
 
 /**
@@ -102,7 +102,7 @@ router.get('/:id', categoryController.getCategoryById);
  *       403:
  *         description: Forbidden (not admin)
  */
-router.post('/', protect, adminOnly, validator(CategorySchema), categoryController.createCategory);
+router.post('/', protect, adminOnly, validator.validate(CategorySchema), categoryController.createCategory);
 
 /**
  * @swagger
@@ -135,7 +135,7 @@ router.post('/', protect, adminOnly, validator(CategorySchema), categoryControll
  *       404:
  *         description: Category not found
  */
-router.put('/:id', protect, adminOnly, validator(CategorySchema), categoryController.updateCategory);
+router.put('/:id', protect, adminOnly, validator.validate(CategorySchema), categoryController.updateCategory);
 
 /**
  * @swagger
