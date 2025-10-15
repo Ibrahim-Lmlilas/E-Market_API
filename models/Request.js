@@ -17,15 +17,15 @@ const requestSchema = new mongoose.Schema({
   },
 
   currentRole: {
-    type: String,
-    required: true,
-    enum: ['ADMIN', 'USER', 'MODERATOR', 'SUPER_ADMIN', 'SELLER']
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    required: true
   },
 
   requestedRole: {
-    type: String,
-    required: true,
-    enum: ['USER', 'SELLER']
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    required: true
   },
 
   status: {
@@ -37,7 +37,7 @@ const requestSchema = new mongoose.Schema({
   handledBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    default: null
+    default: null // admin li qbel/reject request
   },
 
   handledAt: {
@@ -47,7 +47,7 @@ const requestSchema = new mongoose.Schema({
 
   isDirectChange: {
     type: Boolean,
-    default: false
+    default: false // ila admin bddl role direct
   }
 
 }, {
@@ -55,19 +55,24 @@ const requestSchema = new mongoose.Schema({
   versionKey: false
 });
 
+// Method to approve request
 requestSchema.methods.approve = async function(adminUser) {
+  const User = require('./User');
+
   this.status = 'APPROVED';
   this.handledBy = adminUser._id;
   this.handledAt = new Date();
 
-  const User = require('./User');
   const user = await User.findById(this.user);
+  if (!user) throw new Error('User not found');
+
   user.role = this.requestedRole;
   await user.save();
 
   return this.save();
 };
 
+// Method to reject request
 requestSchema.methods.reject = async function(adminUser) {
   this.status = 'REJECTED';
   this.handledBy = adminUser._id;
@@ -75,26 +80,27 @@ requestSchema.methods.reject = async function(adminUser) {
   return this.save();
 };
 
-requestSchema.statics.directChangeRole = async function(userId, newRole, adminUser) {
+// Method for admin direct change (without request)
+requestSchema.statics.directChangeRole = async function(userId, newRoleId, adminUser) {
   const User = require('./User');
+
   const user = await User.findById(userId);
   if (!user) throw new Error('User not found');
 
   await this.create({
     user: user._id,
     currentRole: user.role,
-    requestedRole: newRole,
+    requestedRole: newRoleId,
     status: 'APPROVED',
     handledBy: adminUser._id,
     handledAt: new Date(),
     isDirectChange: true
   });
 
-  user.role = newRole;
+  user.role = newRoleId;
   await user.save();
   return user;
 };
 
 const Request = mongoose.model('Request', requestSchema);
-
 module.exports = Request;
