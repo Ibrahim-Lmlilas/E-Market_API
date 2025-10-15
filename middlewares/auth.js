@@ -46,7 +46,7 @@ const adminOnly = async (req, res, next) => {
       });
     }
     
-    const isAdmin = await req.user.isAdmin();
+    const isAdmin = req.user.isAdmin();
     
     if (!isAdmin) {
       return res.status(403).json({
@@ -56,6 +56,40 @@ const adminOnly = async (req, res, next) => {
     }
     
     next();
+    
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+const sellerOrAdminRole = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized'
+      });
+    }
+    
+    // Check if user is admin
+    const isAdmin = req.user.isAdmin();
+    if (isAdmin) {
+      return next();
+    }
+    
+    // Check if user has SELLER role
+    const isSeller = req.user.role && req.user.role.name === 'SELLER';
+    if (isSeller) {
+      return next();
+    }
+    
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. Only sellers and admins can manage products.'
+    });
     
   } catch (error) {
     res.status(500).json({
@@ -85,7 +119,7 @@ const sellerOrAdmin = async (req, res, next) => {
     }
     
     // Check if user is admin
-    const isAdmin = await req.user.isAdmin();
+    const isAdmin = req.user.isAdmin();
     if (isAdmin) {
       return next();
     }
@@ -109,4 +143,4 @@ const sellerOrAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = { protect, adminOnly, sellerOrAdmin };
+module.exports = { protect, adminOnly, sellerOrAdminRole, sellerOrAdmin };

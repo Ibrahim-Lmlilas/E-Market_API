@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const { protect, adminOnly, sellerOrAdmin } = require('../middlewares/auth');
+const { protect, adminOnly, sellerOrAdminRole, sellerOrAdmin } = require('../middlewares/auth');
 const validator = require('../middlewares/validationMiddleware');
 const {productSchema} = require('../utils/validationSchema');
 
@@ -71,7 +71,7 @@ router.get('/:id', productController.getProductById);
  * @swagger
  * /api/products:
  *   post:
- *     summary: Create a new product (Admin only)
+ *     summary: Create a new product (Seller or Admin only)
  *     tags: [Products]
  *     security:
  *       - bearerAuth: []
@@ -100,15 +100,15 @@ router.get('/:id', productController.getProductById);
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden (not admin)
+ *         description: Forbidden (not seller or admin)
  */
-router.post('/', protect, validator.validate(productSchema), productController.createProduct);
+router.post('/', protect, sellerOrAdminRole, validator.validate(productSchema), productController.createProduct);
 
 /**
  * @swagger
  * /api/products/{id}:
  *   put:
- *     summary: Update product (Admin only)
+ *     summary: Update product (Seller of the product or Admin only)
  *     tags: [Products]
  *     security:
  *       - bearerAuth: []
@@ -131,7 +131,7 @@ router.post('/', protect, validator.validate(productSchema), productController.c
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden (not admin)
+ *         description: Forbidden (not the seller or admin)
  *       404:
  *         description: Product not found
  */
@@ -141,7 +141,7 @@ router.put('/:id', protect, sellerOrAdmin, validator.validate(productSchema), pr
  * @swagger
  * /api/products/{id}:
  *   delete:
- *     summary: Delete product (Admin only)
+ *     summary: Delete product (Seller of the product or Admin only)
  *     tags: [Products]
  *     security:
  *       - bearerAuth: []
@@ -158,7 +158,7 @@ router.put('/:id', protect, sellerOrAdmin, validator.validate(productSchema), pr
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden (not admin)
+ *         description: Forbidden (not the seller or admin)
  *       404:
  *         description: Product not found
  */

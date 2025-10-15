@@ -137,8 +137,8 @@ userSchema.methods.getInitials = function() {
   return (this.firstName.charAt(0) + this.lastName.charAt(0)).toUpperCase();
 };
 
-userSchema.methods.isAdmin = async function() {
-  await this.populate('role');
+userSchema.methods.isAdmin = function() {
+  // No need to populate again, role is already populated in protect middleware
   return this.role && this.role.name === 'ADMIN';
 };
 
