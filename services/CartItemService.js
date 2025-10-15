@@ -41,9 +41,9 @@ class CartItemService {
     async deleteCartItem(cartItemId) {
         try {
             const cartItem = await CartItem.findByIdAndDelete(cartItemId);
-            return true;
+            return cartItem;
         } catch (error) {
-            return false;
+            return null;
         }
     }
 
