@@ -35,4 +35,14 @@ const CategorySchema = yup.object({
     title: yup.string().required('Name is required').min(3, 'Name must be at least 3 characters'),
 });
 
-module.exports = {userSchema, productSchema, CategorySchema,updateprofile,passwordSchema };
+const CartItemSchema = yup.object({
+    cart_id: yup.string().required('Cart ID is required'),
+    product_id: yup.string().required('Product ID is required'),
+    quantity: yup.number("quantity must be a number").required('Quantity is required'),
+});
+
+const UpdateCartItemSchema = yup.object({
+    quantity: yup.number("quantity must be a number").required('Quantity is required'),
+});
+
+module.exports = {userSchema, productSchema, CategorySchema, CartItemSchema, UpdateCartItemSchema, updateprofile ,passwordSchema};
