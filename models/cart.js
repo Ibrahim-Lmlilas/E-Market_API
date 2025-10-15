@@ -48,6 +48,6 @@ cartSchema.pre('findOneAndDelete', async function(next) {
   next();
 });
 
-const Cart = mongoose.model('User', cartSchema);
+const Cart = mongoose.model('Cart', cartSchema);
 
 module.exports = Cart;
