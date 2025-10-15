@@ -16,7 +16,7 @@ const roleSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     uppercase: true,
-    enum: ['ADMIN', 'USER', 'MODERATOR', 'SUPER_ADMIN']
+    enum: ['ADMIN', 'USER', 'MODERATOR', 'SUPER_ADMIN' ,'SELLER']
   },
   
   isActive: {

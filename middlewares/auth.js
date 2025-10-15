@@ -65,4 +65,48 @@ const adminOnly = async (req, res, next) => {
   }
 };
 
-module.exports = { protect, adminOnly };
+const sellerOrAdmin = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized'
+      });
+    }
+    
+    const Product = require('../models/Product');
+    const product = await Product.findById(req.params.id);
+    
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+    
+    // Check if user is admin
+    const isAdmin = await req.user.isAdmin();
+    if (isAdmin) {
+      return next();
+    }
+    
+    // Check if user is the seller of the product
+    const isSeller = product.seller.toString() === req.user._id.toString();
+    if (isSeller) {
+      return next();
+    }
+    
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. You can only edit your own products.'
+    });
+    
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+module.exports = { protect, adminOnly, sellerOrAdmin };

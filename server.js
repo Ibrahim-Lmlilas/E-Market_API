@@ -4,9 +4,12 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 require('dotenv').config();
 
+const ResponseHandler = require('./utils/responseHandler');
+
 const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 require('./models/User');
 require('./models/Role');
@@ -18,6 +21,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(ResponseHandler.logger);
 
 // ---------------------Routes--------------------------
 app.get('/', (req, res) => {
@@ -46,6 +51,13 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/profiles', profileRoutes);
+
+// in case route not found
+app.use(ResponseHandler.notFound);
+
+// // in case of a server error
+app.use(ResponseHandler.errorHandler);
 
 
 //----------------------------------------------------------

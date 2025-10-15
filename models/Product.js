@@ -62,6 +62,20 @@ const productSchema = new mongoose.Schema({
     }
   },
   
+  seller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Product must have a seller'],
+    validate: {
+      validator: async function(sellerId) {
+        const User = mongoose.model('User');
+        const seller = await User.findById(sellerId);
+        return seller && !seller.isDeleted;
+      },
+      message: 'Please provide a valid seller'
+    }
+  },
+  
   imageUrl: {
     type: String,
     trim: true,
@@ -135,6 +149,17 @@ const productSchema = new mongoose.Schema({
     }
   },
   
+  status: {
+    type: String,
+    enum: ['draft', 'published', 'inactive', 'pending_approval'],
+    default: 'draft'
+  },
+  
+  isVisible: {
+    type: Boolean,
+    default: false
+  },
+  
   isDeleted: {
     type: Boolean,
     default: false
@@ -151,6 +176,9 @@ const productSchema = new mongoose.Schema({
 
 productSchema.index({ uuid: 1 }, { unique: true });
 productSchema.index({ category: 1 });
+productSchema.index({ seller: 1 });
+productSchema.index({ status: 1 });
+productSchema.index({ isVisible: 1 });
 productSchema.index({ price: 1 });
 productSchema.index({ 'promotion.isActive': 1 });
 productSchema.index({ 'promotion.endDate': 1 });
