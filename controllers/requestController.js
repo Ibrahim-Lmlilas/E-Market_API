@@ -7,26 +7,39 @@ exports.createRequest = async (req, res) => {
   try {
     const { requestedRoleName } = req.body;
 
-    // Get Role object
+    // ✅ تأكد أن المستخدم فعلاً كاين فـ DB
+    const user = await User.findById(req.user._id).populate('role');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // ✅ تحقق من الدور المطلوب
     const requestedRole = await Role.findOne({ name: requestedRoleName });
     if (!requestedRole || !requestedRole.isActive || requestedRole.isDeleted) {
       return res.status(400).json({ success: false, message: 'Invalid role request' });
     }
 
-    // Check if user already has pending request
-    const existingRequest = await Request.findOne({ user: req.user._id, status: 'PENDING' });
+    // ✅ تحقق أن المستخدم ما عندوش نفس الدور أصلاً
+    if (user.role.name === requestedRoleName) {
+      return res.status(400).json({ success: false, message: 'You already have this role' });
+    }
+
+    // ✅ تحقق من وجود طلب سابق معلق
+    const existingRequest = await Request.findOne({ user: user._id, status: 'PENDING' });
     if (existingRequest) {
       return res.status(400).json({ success: false, message: 'You already have a pending request' });
     }
 
+    // ✅ إنشاء الطلب الجديد
     const request = await Request.create({
-      user: req.user._id,
-      currentRole: req.user.role,
+      user: user._id,
+      currentRole: user.role._id,
       requestedRole: requestedRole._id
     });
 
     res.status(201).json({ success: true, data: request });
   } catch (error) {
+    console.error("Error in createRequest:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
