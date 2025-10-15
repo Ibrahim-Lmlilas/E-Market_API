@@ -8,6 +8,20 @@ const userSchema = yup.object({
     password: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
 });
 
+const updateprofile = yup.object({
+    firstName: yup.string().min(3, 'first Name must be at least 3 characters'),
+    lastName: yup.string().min(3, 'last Name must be at least 3 characters'),
+    nickname: yup.string().min(3, 'nickname must be at least 3 characters'),
+    email: yup.string().email('Invalid email format'),
+});
+
+
+const passwordSchema = yup.object({
+    oldPassword: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
+    confirmPassword: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
+    newPassword: yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
+
+})
 const productSchema = yup.object({
     title: yup.string().required('Title is required').min(3, 'Title must be at least 3 characters'),
     description: yup.string().required('Description is required').min(8, 'Description must be at least 8 characters'),
@@ -31,4 +45,4 @@ const UpdateCartItemSchema = yup.object({
     quantity: yup.number("quantity must be a number").required('Quantity is required'),
 });
 
-module.exports = {userSchema, productSchema, CategorySchema, CartItemSchema, UpdateCartItemSchema};
+module.exports = {userSchema, productSchema, CategorySchema, CartItemSchema, UpdateCartItemSchema, updateprofile ,passwordSchema};
