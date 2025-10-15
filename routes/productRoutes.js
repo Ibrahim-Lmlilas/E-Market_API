@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const { protect, adminOnly } = require('../middlewares/auth');
+const { protect, adminOnly, sellerOrAdmin } = require('../middlewares/auth');
 const validator = require('../middlewares/validationMiddleware');
 const {productSchema} = require('../utils/validationSchema');
 
@@ -102,7 +102,7 @@ router.get('/:id', productController.getProductById);
  *       403:
  *         description: Forbidden (not admin)
  */
-router.post('/', protect, adminOnly, validator.validate(productSchema), productController.createProduct);
+router.post('/', protect, validator.validate(productSchema), productController.createProduct);
 
 /**
  * @swagger
@@ -135,7 +135,7 @@ router.post('/', protect, adminOnly, validator.validate(productSchema), productC
  *       404:
  *         description: Product not found
  */
-router.put('/:id', protect, adminOnly, validator.validate(productSchema), productController.updateProduct);
+router.put('/:id', protect, sellerOrAdmin, validator.validate(productSchema), productController.updateProduct);
 
 /**
  * @swagger
@@ -162,6 +162,6 @@ router.put('/:id', protect, adminOnly, validator.validate(productSchema), produc
  *       404:
  *         description: Product not found
  */
-router.delete('/:id', protect, adminOnly, productController.deleteProduct);
+router.delete('/:id', protect, sellerOrAdmin, productController.deleteProduct);
 
 module.exports = router;
