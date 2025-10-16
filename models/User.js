@@ -104,8 +104,7 @@ const userSchema = new mongoose.Schema({
   versionKey: false 
 });
 
-userSchema.index({ email: 1 }, { unique: true });
-userSchema.index({ uuid: 1 }, { unique: true });
+// Index for performance (unique already defined in schema)
 userSchema.index({ role: 1 });
 userSchema.index({ nickname: 1 });
 
