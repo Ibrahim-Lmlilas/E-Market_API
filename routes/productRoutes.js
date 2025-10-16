@@ -9,28 +9,104 @@ const {productSchema} = require('../utils/validationSchema');
  * @swagger
  * /api/products:
  *   get:
- *     summary: Get all products
+ *     summary: Get all published products (Public) with pagination
  *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Filter by category ID
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by product title
  *     responses:
  *       200:
- *         description: List of all products
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 count:
- *                   type: integer
- *                   example: 10
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Product'
+ *         description: List of all published products
  */
 router.get('/', productController.getAllProducts);
+
+/**
+ * @swagger
+ * /api/products/admin/all:
+ *   get:
+ *     summary: Get ALL products including drafts (Admin only) with pagination
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [draft, published, inactive, pending_approval]
+ *       - in: query
+ *         name: includeDeleted
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of all products (admin view)
+ */
+router.get('/admin/all', protect, adminOnly, productController.getAllProductsAdmin);
+
+/**
+ * @swagger
+ * /api/products/my-products:
+ *   get:
+ *     summary: Get seller's own products with pagination
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of seller's products
+ */
+router.get('/my-products', protect, sellerOrAdminRole, productController.getMyProducts);
 
 /**
  * @swagger
@@ -48,22 +124,8 @@ router.get('/', productController.getAllProducts);
  *     responses:
  *       200:
  *         description: Product found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   $ref: '#/components/schemas/Product'
  *       404:
  *         description: Product not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
  */
 router.get('/:id', productController.getProductById);
 
