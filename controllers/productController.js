@@ -191,7 +191,37 @@ class ProductController {
 
     async createProduct(req, res) {
         try {
-            const { title, description, price, stock, category, imageUrl, status, isVisible } = req.body;
+            const { title, description, price, stock, category, status, isVisible } = req.body;
+            
+            // Combine uploaded images and URL images
+            let images = [];
+            
+            // Add uploaded images (from upload middleware)
+            if (req.body.uploadedImages && req.body.uploadedImages.length > 0) {
+                images = [...req.body.uploadedImages];
+            }
+            
+            // Add URL images (from form data)
+            if (req.body.imageUrls && Array.isArray(req.body.imageUrls)) {
+                const urlImages = req.body.imageUrls.map((url, index) => ({
+                    url: url.trim(),
+                    isMain: images.length === 0 && index === 0 // First URL is main if no uploaded images
+                }));
+                images = [...images, ...urlImages];
+            }
+            
+            // Ensure at least one image
+            if (images.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'At least one image is required'
+                });
+            }
+            
+            // Set first image as main if no main image is set
+            if (!images.some(img => img.isMain)) {
+                images[0].isMain = true;
+            }
             
             const product = new Product({
                 title,
@@ -199,7 +229,7 @@ class ProductController {
                 price,
                 stock,
                 category,
-                imageUrl,
+                images,
                 seller: req.user._id, // Set seller to current user
                 status: status || 'published', // Default to published
                 isVisible: isVisible !== undefined ? isVisible : true // Default to visible
@@ -225,21 +255,71 @@ class ProductController {
 
     async updateProduct(req, res) {
         try {
-            const { title, description, price, stock, category, imageUrl, status, isVisible } = req.body;
+            const { title, description, price, stock, category, status, isVisible } = req.body;
             
-            const product = await Product.findByIdAndUpdate(
-                req.params.id,
-                { title, description, price, stock, category, imageUrl, status, isVisible },
-                { new: true, runValidators: true }
-            ).populate('category', 'title slug')
-             .populate('seller', 'firstName lastName email');
-            
-            if (!product || product.isDeleted) {
+            // Find existing product
+            const existingProduct = await Product.findById(req.params.id);
+            if (!existingProduct || existingProduct.isDeleted) {
                 return res.status(404).json({
                     success: false,
                     message: 'Product not found'
                 });
             }
+            
+            // Prepare update data
+            const updateData = {
+                title,
+                description,
+                price,
+                stock,
+                category,
+                status,
+                isVisible
+            };
+            
+            // Handle images update
+            let images = [...existingProduct.images]; // Keep existing images by default
+            
+            // If new images are provided, replace existing ones
+            if (req.body.uploadedImages || req.body.imageUrls) {
+                images = [];
+                
+                // Add uploaded images (from upload middleware)
+                if (req.body.uploadedImages && req.body.uploadedImages.length > 0) {
+                    images = [...req.body.uploadedImages];
+                }
+                
+                // Add URL images (from form data)
+                if (req.body.imageUrls && Array.isArray(req.body.imageUrls)) {
+                    const urlImages = req.body.imageUrls.map((url, index) => ({
+                        url: url.trim(),
+                        isMain: images.length === 0 && index === 0 // First URL is main if no uploaded images
+                    }));
+                    images = [...images, ...urlImages];
+                }
+                
+                // Ensure at least one image
+                if (images.length === 0) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'At least one image is required'
+                    });
+                }
+                
+                // Set first image as main if no main image is set
+                if (!images.some(img => img.isMain)) {
+                    images[0].isMain = true;
+                }
+                
+                updateData.images = images;
+            }
+            
+            const product = await Product.findByIdAndUpdate(
+                req.params.id,
+                updateData,
+                { new: true, runValidators: true }
+            ).populate('category', 'title slug')
+             .populate('seller', 'firstName lastName email');
             
             res.status(200).json({
                 success: true,
