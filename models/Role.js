@@ -38,8 +38,7 @@ const roleSchema = new mongoose.Schema({
   versionKey: false
 });
 
-roleSchema.index({ uuid: 1 }, { unique: true });
-roleSchema.index({ name: 1 }, { unique: true });
+// Indexes already defined as unique in schema fields
 
 roleSchema.methods.softDelete = function() {
   this.isDeleted = true;
