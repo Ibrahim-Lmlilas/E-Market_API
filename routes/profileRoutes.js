@@ -2,9 +2,12 @@ const express = require('express');
 const router = express.Router();
 const profileController = require('../controllers/profileController');
 const { protect } = require('../middlewares/auth');
+const validator = require('../middlewares/validationMiddleware');
+const {updateprofile} = require('../utils/validationSchema');
+const {passwordSchema} = require('../utils/validationSchema');
 
 
-router.put('/edit', protect, async (req, res) => {
+router.put('/edit', protect,validator.validate(updateprofile), async (req, res) => {
     const controller = new profileController();
   try {
     await controller.editProfile(req, res);
@@ -15,7 +18,7 @@ router.put('/edit', protect, async (req, res) => {
 });
 
 
-router.put('/change-password', protect, async (req, res) => {
+router.put('/change-password', protect,validator.validate(passwordSchema), async (req, res) => {
   try {
     const controller = new profileController();
     await controller.changePassword(req, res);
@@ -24,4 +27,15 @@ router.put('/change-password', protect, async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+router.get('/me', protect, async (req, res) => {
+  try {
+    const controller = new profileController();
+    await controller.getProfile(req, res);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 module.exports = router;

@@ -45,9 +45,7 @@ const categorySchema = new mongoose.Schema({
   versionKey: false
 });
 
-categorySchema.index({ uuid: 1 }, { unique: true });
-categorySchema.index({ title: 1 }, { unique: true });
-categorySchema.index({ slug: 1 }, { unique: true });
+// Indexes already defined as unique in schema fields
 
 categorySchema.pre('save', function(next) {
   if (this.isModified('title')) {

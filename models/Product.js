@@ -174,7 +174,7 @@ const productSchema = new mongoose.Schema({
   versionKey: false 
 });
 
-productSchema.index({ uuid: 1 }, { unique: true });
+// Performance indexes (uuid unique already defined in schema)
 productSchema.index({ category: 1 });
 productSchema.index({ seller: 1 });
 productSchema.index({ status: 1 });
