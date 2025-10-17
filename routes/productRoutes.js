@@ -227,4 +227,6 @@ router.put('/:id', protect, sellerOrAdmin, uploadImageMiddleware, validator.vali
  */
 router.delete('/:id', protect, sellerOrAdmin, productController.deleteProduct);
 
+router.get('/search/:column/:value', productController.searchProduct);
+
 module.exports = router;
