@@ -68,7 +68,6 @@ const productSchema = new mongoose.Schema({
     validate: {
       validator: function(url) {
         if (!url) return true; 
-        // يقبل أي URL يبدا ب http:// أو https://
         return /^https?:\/\/.+/i.test(url);
       },
       message: 'Please provide a valid image URL'

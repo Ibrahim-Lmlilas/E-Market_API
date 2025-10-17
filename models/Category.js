@@ -51,15 +51,16 @@ categorySchema.index({ slug: 1 }, { unique: true });
 
 categorySchema.pre('save', function(next) {
   if (this.isModified('title')) {
-    const randomNumbers = Math.floor(1000000 + Math.random() * 9000000); // 7 digits
+    const randomNumbers = Math.floor(1000000 + Math.random() * 9000000); // 7 chiffres aléatoires
     
     const cleanTitle = this.title
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '');
-    
+    //"My New Article!" → "my-new-article"
     this.slug = randomNumbers + '-' + cleanTitle;
+    //1234567-smartphones
   }
   next();
 });
@@ -80,6 +81,14 @@ categorySchema.statics.findByTitle = function(title) {
 
 categorySchema.statics.findBySlug = function(slug) {
   return this.findOne({ slug: slug });
+};
+
+categorySchema.statics.findActive = function() {
+  return this.find({ isDeleted: false });
+};
+
+categorySchema.statics.findByIdActive = function(id) {
+  return this.findOne({ _id: id, isDeleted: false });
 };
 
 // Simple toJSON

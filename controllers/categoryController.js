@@ -4,7 +4,7 @@ class CategoryController {
 
     async getAllCategories(req, res) {
         try {
-            const categories = await Category.find({ isDeleted: false });
+            const categories = await Category.findActive();
             
             res.status(200).json({
                 success: true,
@@ -22,9 +22,9 @@ class CategoryController {
 
     async getCategoryById(req, res) {
         try {
-            const category = await Category.findById(req.params.id);
+            const category = await Category.findByIdActive(req.params.id);
             
-            if (!category || category.isDeleted) {
+            if (!category) {
                 return res.status(404).json({
                     success: false,
                     message: 'Category not found'
@@ -48,6 +48,7 @@ class CategoryController {
         try {
             const { title } = req.body;
             
+            // kankrei instance in  Category 
             const category = new Category({
                 title
             });
@@ -70,6 +71,7 @@ class CategoryController {
 
     async updateCategory(req, res) {
         try {
+            // kanextractiw title in req.body 
             const { title } = req.body;
             
             const category = await Category.findByIdAndUpdate(
@@ -101,18 +103,16 @@ class CategoryController {
 
     async deleteCategory(req, res) {
         try {
-            const category = await Category.findById(req.params.id);
+            const category = await Category.findByIdActive(req.params.id);
             
-            if (!category || category.isDeleted) {
+            if (!category) {
                 return res.status(404).json({
                     success: false,
                     message: 'Category not found'
                 });
             }
             
-            category.isDeleted = true;
-            category.deletedAt = new Date();
-            await category.save();
+            await category.softDelete();
             
             res.status(200).json({
                 success: true,
