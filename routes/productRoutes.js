@@ -32,6 +32,49 @@ router.get('/', productController.getAllProducts);
 
 /**
  * @swagger
+ * /api/products/search:
+ *   get:
+ *     summary: Search products by name and price range
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Product name to search for (case-insensitive)
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price filter
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price filter
+ *     responses:
+ *       200:
+ *         description: Search results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 count:
+ *                   type: integer
+ *                   example: 5
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Product'
+ */
+router.get('/search', productController.searchProducts);
+
+/**
+ * @swagger
  * /api/products/{id}:
  *   get:
  *     summary: Get product by ID

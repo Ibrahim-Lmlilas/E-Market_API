@@ -135,6 +135,48 @@ class ProductController {
             });
         }
     }
+
+    async searchProducts(req, res) {
+        try {
+            const { name, minPrice, maxPrice } = req.query;
+            
+            // Build the search query
+            let query = { isDeleted: false };
+            
+            // Search by product name (case-insensitive)
+            if (name) {
+                query.title = { $regex: name, $options: 'i' };
+            }
+            
+            // Search by price range
+            if (minPrice || maxPrice) {
+                query.price = {};
+                if (minPrice) {
+                    query.price.$gte = parseFloat(minPrice);
+                }
+                if (maxPrice) {
+                    query.price.$lte = parseFloat(maxPrice);
+                }
+            }
+            
+            // Execute search
+            const products = await Product.find(query)
+                .populate('category', 'title slug')
+                .sort({ createdAt: -1 });
+            
+            res.status(200).json({
+                success: true,
+                count: products.length,
+                data: products
+            });
+            
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
 }
 
 module.exports = new ProductController();

@@ -6,7 +6,7 @@ const roleSchema = new mongoose.Schema({
     type: String,
     default: () => uuidv4(),
     unique: true,
-    immutable: true,
+    immutable: true, // cannot be changed after creation
     index: true
   },
   
@@ -47,6 +47,7 @@ roleSchema.methods.softDelete = function() {
   return this.save();
 };
 
+//Méthode Statique findByUuid:
 roleSchema.statics.findByUuid = function(uuid) {
   return this.findOne({ uuid: uuid });
 };
@@ -56,9 +57,9 @@ roleSchema.statics.findByName = function(name) {
 };
 
 roleSchema.methods.toJSON = function() {
-  const role = this.toObject();
-  delete role._id;
-  return role;
+  const role = this.toObject();// Convertit en objet JavaScript
+  delete role._id;// Supprime l'ID MongoDB
+  return role;// Retourne l'objet nettoyé
 };
 
 const Role = mongoose.model('Role', roleSchema);

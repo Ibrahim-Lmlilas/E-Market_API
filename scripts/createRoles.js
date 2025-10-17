@@ -5,10 +5,8 @@ require('dotenv').config();
 
 const createRoles = async () => {
   try {
-    // Connect to database
     await mongoose.connect(process.env.MONGODB_URI);
     
-    // Check if roles exist
     const count = await Role.countDocuments();
     if (count > 0) {
       console.log('Roles already exist');
