@@ -4,7 +4,8 @@ class ProductController {
 
     async getAllProducts(req, res) {
         try {
-            const products = await Product.find({ isDeleted: false })
+            // Utiliser la méthode findActive du modèle
+            const products = await Product.findActive()
                 .populate('category', 'title slug')
                 .sort({ createdAt: -1 });
             
@@ -24,10 +25,11 @@ class ProductController {
 
     async getProductById(req, res) {
         try {
-            const product = await Product.findById(req.params.id)
+            // Utiliser la méthode findByIdActive du modèle
+            const product = await Product.findByIdActive(req.params.id)
                 .populate('category', 'title slug');
             
-            if (!product || product.isDeleted) {
+            if (!product) {
                 return res.status(404).json({
                     success: false,
                     message: 'Product not found'
@@ -47,10 +49,13 @@ class ProductController {
         }
     }
 
+    
     async createProduct(req, res) {
         try {
+            
             const { title, description, price, stock, category, imageUrl } = req.body;
             
+            // Créer une nouvelle instance de Product avec les valeurs fournies
             const product = new Product({
                 title,
                 description,
@@ -59,10 +64,14 @@ class ProductController {
                 category,
                 imageUrl
             });
-            
+
+            // Sauvegarder le nouveau produit dans la base de données
             await product.save();
+
+            // Peupler le champ category avec les champs title et slug pour plus de clarté côté client
             await product.populate('category', 'title slug');
             
+            // Répondre avec le produit créé et un message de succès
             res.status(201).json({
                 success: true,
                 message: 'Product created successfully',
@@ -81,12 +90,14 @@ class ProductController {
         try {
             const { title, description, price, stock, category, imageUrl } = req.body;
             
+            // Chercher et mettre à jour le produit dans la base de donnes
             const product = await Product.findByIdAndUpdate(
                 req.params.id,
                 { title, description, price, stock, category, imageUrl },
                 { new: true, runValidators: true }
             ).populate('category', 'title slug');
             
+            // Vérifier si le produit existe et qu'il n'est pas supprimé
             if (!product || product.isDeleted) {
                 return res.status(404).json({
                     success: false,
@@ -101,6 +112,7 @@ class ProductController {
             });
             
         } catch (error) {
+            // Gérer les erreurs et retourner un message d'erreur approprié
             res.status(500).json({
                 success: false,
                 message: error.message
@@ -110,18 +122,17 @@ class ProductController {
 
     async deleteProduct(req, res) {
         try {
-            const product = await Product.findById(req.params.id);
+            // Utiliser la méthode findByIdActive du modèle
+            const product = await Product.findByIdActive(req.params.id);
             
-            if (!product || product.isDeleted) {
+            if (!product) {
                 return res.status(404).json({
                     success: false,
                     message: 'Product not found'
                 });
             }
             
-            product.isDeleted = true;
-            product.deletedAt = new Date();
-            await product.save();
+            await product.softDelete();
             
             res.status(200).json({
                 success: true,

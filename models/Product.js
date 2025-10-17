@@ -49,10 +49,10 @@ const productSchema = new mongoose.Schema({
   },
   
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
+    type: mongoose.Schema.Types.ObjectId, // Référence vers Category
+    ref: 'Category', // Modèle référencé
     required: [true, 'Product category is required'],
-    validate: {
+    validate: {// Validation personnalisée
       validator: async function(categoryId) {
         const Category = mongoose.model('Category');
         const category = await Category.findById(categoryId);
@@ -68,30 +68,12 @@ const productSchema = new mongoose.Schema({
     validate: {
       validator: function(url) {
         if (!url) return true; 
-        return /^https?:\/\/.+/i.test(url);
+        return /^https?:\/\/.+/i.test(url);// Doit commencer par http:// ou https://
       },
       message: 'Please provide a valid image URL'
     }
   },
   
-  uploadedImage: {
-    filename: {
-      type: String,
-      trim: true
-    },
-    originalName: {
-      type: String,
-      trim: true
-    },
-    size: {
-      type: Number,
-      min: 0
-    },
-    mimetype: {
-      type: String,
-      trim: true
-    }
-  },
   
   promotion: {
     isActive: {
@@ -263,6 +245,16 @@ productSchema.statics.findOnPromotion = function() {
     ],
     isDeleted: false
   });
+};
+
+// Méthode pour trouver tous les produits actifs (non supprimés)
+productSchema.statics.findActive = function() {
+  return this.find({ isDeleted: false });
+};
+
+// Méthode pour trouver un produit actif par ID
+productSchema.statics.findByIdActive = function(id) {
+  return this.findOne({ _id: id, isDeleted: false });
 };
 
 productSchema.methods.toJSON = function() {
