@@ -76,6 +76,7 @@ const userSchema = new mongoose.Schema({
   
   
   role: {
+    // hadi ObjectId dial mongoose katconnecti b Role
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Role',
     required: [true, 'User role is required'],
@@ -109,19 +110,20 @@ userSchema.index({ uuid: 1 }, { unique: true });
 userSchema.index({ role: 1 });
 userSchema.index({ nickname: 1 });
 
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
+userSchema.pre('save', async function(next) { // had l-hook kaytsla before save bach nandiro hash l password
+  if (!this.isModified('password')) return next(); // ila makanch password tbdl, mandidro walo
   try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
+    const salt = await bcrypt.genSalt(10); // ncreatew salt b bcrypt
+    this.password = await bcrypt.hash(this.password, salt); // nhashew password b dik salt
+    next(); 
   } catch (error) {
-    next(error);
+    next(error); // ila ka error npassiw l error l next
   }
 });
 
+// hadi method katcompare password howa wli user dkhlha f login
 userSchema.methods.comparePassword = async function(candidatePassword) {
+  // bcrypt.compare kaydir hashing l candidatePassword w ykawno m3a stored password
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
