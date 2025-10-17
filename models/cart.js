@@ -23,6 +23,11 @@ const cartSchema = new mongoose.Schema({
     default: false
   },
 
+  coupon: {
+    type: String,
+    default: null
+  },
+
   type: {
     type:String,
     enum: ['Cart', 'Order'],
