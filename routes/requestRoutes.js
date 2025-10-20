@@ -7,6 +7,11 @@ const { protect, adminOnly } = require('../middlewares/auth');
 // User routes
 // ----------------------------
 
+/**
+ * @swagger
+ * /api/request/:
+ */
+
 // User creates a role change request (USER -> SELLER)
 router.post('/request-role-change', protect, requestController.createRequest);
 

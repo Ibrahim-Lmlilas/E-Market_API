@@ -6,7 +6,10 @@ const validator = require('../middlewares/validationMiddleware');
 const {updateprofile} = require('../utils/validationSchema');
 const {passwordSchema} = require('../utils/validationSchema');
 
-
+/**
+ * @swagger
+ * /api/profile/:
+ */
 router.put('/edit', protect,validator.validate(updateprofile), async (req, res) => {
     const controller = new profileController();
   try {
