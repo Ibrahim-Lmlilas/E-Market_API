@@ -151,15 +151,13 @@ class ProductController {
         try {
             const { name, minPrice, maxPrice } = req.query;
             
-            // Build the search query
             let query = { isDeleted: false };
             
-            // Search by product name (case-insensitive)
             if (name) {
                 query.title = { $regex: name, $options: 'i' };
             }
             
-            // Search by price range
+            // ila kan minPrice wla maxPrice, kanzido l query 7it bghina l prix f hadchi
             if (minPrice || maxPrice) {
                 query.price = {};
                 if (minPrice) {
@@ -170,7 +168,7 @@ class ProductController {
                 }
             }
             
-            // Execute search
+           
             const products = await Product.find(query)
                 .populate('category', 'title slug')
                 .sort({ createdAt: -1 });
