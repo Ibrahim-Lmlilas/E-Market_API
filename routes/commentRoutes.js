@@ -108,7 +108,7 @@ router.get('/product/:productId', commentController.getCommentsByProduct);
  *       401:
  *         description: Unauthorized
  */
-router.post('/', protect, validator.validate(CommentSchema), commentController.createComment);
+router.post('/', protect, commentController.createComment);
 
 /**
  * @swagger

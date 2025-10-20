@@ -3,7 +3,7 @@ const Product = require('../models/Product');
 
 class CommentController {
   
-  // 🟢 Create a new comment
+  //  Create a new comment
   async createComment(req, res) {
     try {
       const { productId, text } = req.body;
@@ -36,7 +36,7 @@ class CommentController {
     }
   }
 
-  // 🟡 Get all comments for a product
+  //  Get all comments for a product
   async getCommentsByProduct(req, res) {
     try {
       const comments = await Comment.find({ product: req.params.productId })
@@ -49,7 +49,7 @@ class CommentController {
     }
   }
 
-  // 🔵 Update user comment
+  //  Update user comment
   async updateComment(req, res) {
     try {
       const comment = await Comment.findById(req.params.id);
@@ -72,7 +72,7 @@ class CommentController {
     }
   }
 
-  // 🔴 Delete comment (User or Admin)
+  //  Delete comment (User or Admin)
   async deleteComment(req, res) {
     try {
       const comment = await Comment.findById(req.params.id);
@@ -96,7 +96,7 @@ class CommentController {
     }
   }
 
-  // 🟣 Seller: get comments on his products
+  // Seller: get comments on his products
   async getSellerProductComments(req, res) {
     try {
       // 
@@ -114,7 +114,7 @@ class CommentController {
     }
   }
 
-  // 🟠 Admin: get all comments
+  //  Admin: get all comments
   async getAllComments(req, res) {
     try {
       const comments = await Comment.find()
