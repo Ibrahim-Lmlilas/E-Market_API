@@ -11,6 +11,7 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const requestRoutes = require('./routes/requestRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 
 require('./models/User');
 require('./models/Role');
@@ -54,6 +55,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/request', requestRoutes);
+app.use('/api/comment', commentRoutes);
 
 // in case route not found
 app.use(ResponseHandler.notFound);
