@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const Category = require('../models/Category'); 
 
 class ProductController {
 
@@ -361,6 +362,36 @@ class ProductController {
                 message: error.message
             });
         }
+    }
+
+    async searchProduct(req, res){
+        const {column, value} = req.query;
+        
+        if (column == "category") {
+            const category = await Category.findOne({slug: value});
+            value = category._id;
+        } 
+        
+        try {
+            const product = await Product.findOne({[column]: value});
+
+            if (!product || product.isDeleted) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Product not found'
+                });
+            }
+            res.status(200).json({
+                success: true,
+                data: product
+            });
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+
     }
 }
 
