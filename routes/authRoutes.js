@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const { protect } = require('../middlewares/auth');
+const validator = require('../middlewares/validationMiddleware');
+const { userSchema } = require('../utils/validationSchema');
 
 /**
  * @swagger
@@ -35,7 +37,7 @@ const { protect } = require('../middlewares/auth');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/register', authController.register);
+router.post('/register', validator.validate(userSchema), authController.register);
 
 /**
  * @swagger

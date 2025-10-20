@@ -14,9 +14,10 @@ const createRoles = async () => {
       console.log('Roles already exist');
       return;
     }
-
+    
     await Role.create({ name: 'USER' });
     await Role.create({ name: 'ADMIN' });
+    await Role.create({ name: 'SELLER' });
     await Role.create({ name: 'MODERATOR' });
     await Role.create({ name: 'SUPER_ADMIN' });
 
