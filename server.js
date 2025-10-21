@@ -1,4 +1,5 @@
 const express = require('express');
+const logger = require('./middlewares/logger');
 const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
@@ -15,6 +16,7 @@ require('./models/Category');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use(logger);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

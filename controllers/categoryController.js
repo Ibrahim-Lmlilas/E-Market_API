@@ -1,5 +1,8 @@
 const Category = require('../models/Category');
 
+const mongoose = require('mongoose');
+
+
 class CategoryController {
 
     async getAllCategories(req, res) {
@@ -22,6 +25,13 @@ class CategoryController {
 
     async getCategoryById(req, res) {
         try {
+
+            const { id } = req.params;
+             if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: '404 not found' });
+  } 
+
+
             const category = await Category.findByIdActive(req.params.id);
             
             if (!category) {
@@ -46,6 +56,7 @@ class CategoryController {
 
     async createCategory(req, res) {
         try {
+
             const { title } = req.body;
             
             // kankrei instance in  Category 
@@ -71,6 +82,7 @@ class CategoryController {
 
     async updateCategory(req, res) {
         try {
+
             // kanextractiw title in req.body 
             const { title } = req.body;
             

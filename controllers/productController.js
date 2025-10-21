@@ -94,7 +94,7 @@ class ProductController {
             const product = await Product.findByIdAndUpdate(
                 req.params.id,
                 { title, description, price, stock, category, imageUrl },
-                { new: true, runValidators: true }
+                { new: true}
             ).populate('category', 'title slug');
             
             // Vérifier si le produit existe et qu'il n'est pas supprimé

@@ -259,7 +259,6 @@ productSchema.statics.findByIdActive = function(id) {
 
 productSchema.methods.toJSON = function() {
   const product = this.toObject();
-  delete product._id;
   
   product.isOnPromotion = this.isOnPromotion();
   if (product.isOnPromotion) {

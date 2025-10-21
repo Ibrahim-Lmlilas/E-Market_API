@@ -94,7 +94,6 @@ categorySchema.statics.findByIdActive = function(id) {
 // Simple toJSON
 categorySchema.methods.toJSON = function() {
   const category = this.toObject();
-  delete category._id;
   return category;
 };
 
