@@ -9,7 +9,9 @@
     "setup-roles": "node scripts/createRoles.js",
     "setup-categories": "node scripts/createCategories.js",
     "setup-products": "node scripts/createProducts.js",
-    "test": "mocha --timeout 10000 --exit test/**/*.test.js"
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "test:coverage": "mocha --reporter json > test-results.json"
   },
   "repository": {
     "type": "git",
@@ -38,6 +40,7 @@
     "chai": "^4.5.0",
     "chai-http": "^5.1.2",
     "mocha": "^11.7.4",
+    "mongodb-memory-server": "^9.5.0",
     "nodemon": "^3.1.10",
     "supertest": "^7.1.4"
   }
