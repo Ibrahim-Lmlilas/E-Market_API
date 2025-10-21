@@ -12,7 +12,7 @@ async function writeToFile(fileName, data) {
 function logger(req, res, next){
     const method=req.method;
     const url=req.url;
-    const time=new Date().getFullYear();
+    const time=new Date();
     console.log(method,url,time);
    writeToFile('logger.txt', method+" "+url+" "+time);
      next();
