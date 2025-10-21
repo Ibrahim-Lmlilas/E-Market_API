@@ -6,9 +6,9 @@ class CommentController {
   //  Create a new comment
   async createComment(req, res) {
     try {
-      const { productId, text } = req.body;
+      const { productId, commentaire } = req.body;
 
-      if (!text) {
+      if (!commentaire) {
         return res.status(400).json({ success: false, message: 'Comment text is required' });
       }
 
@@ -19,15 +19,15 @@ class CommentController {
       }
 
       //
-      const existing = await Comment.findOne({ user: req.user._id, product: productId });
+      const existing = await Comment.findOne({ user_id: req.user._id, product_id: productId });
       if (existing) {
         return res.status(400).json({ success: false, message: 'You already commented on this product' });
       }
 
       const comment = await Comment.create({
-        user: req.user._id,
-        product: productId,
-        text,
+        user_id: req.user._id,
+        product_id: productId,
+        commentaire,
       });
 
       res.status(201).json({ success: true, message: 'Comment added successfully', data: comment });
@@ -39,8 +39,8 @@ class CommentController {
   //  Get all comments for a product
   async getCommentsByProduct(req, res) {
     try {
-      const comments = await Comment.find({ product: req.params.productId })
-        .populate('user', 'firstName lastName email')
+      const comments = await Comment.find({ product_id: req.params.productId })
+        .populate('user_id', 'firstName lastName email')
         .sort({ createdAt: -1 });
 
       res.status(200).json({ success: true, count: comments.length, data: comments });
@@ -59,11 +59,11 @@ class CommentController {
       }
 
       // 
-      if (comment.user.toString() !== req.user._id.toString()) {
+      if (comment.user_id.toString() !== req.user._id.toString()) {
         return res.status(403).json({ success: false, message: 'You are not authorized to edit this comment' });
       }
 
-      comment.text = req.body.text || comment.text;
+      comment.commentaire = req.body.commentaire || comment.commentaire;
       await comment.save();
 
       res.status(200).json({ success: true, message: 'Comment updated successfully', data: comment });
@@ -83,7 +83,7 @@ class CommentController {
 
       // 
       if (
-        comment.user.toString() !== req.user._id.toString() &&
+        comment.user_id.toString() !== req.user._id.toString() &&
         req.user.role.name !== 'admin'
       ) {
         return res.status(403).json({ success: false, message: 'Not authorized to delete this comment' });
@@ -104,9 +104,9 @@ class CommentController {
 
       const productIds = products.map((p) => p._id);
 
-      const comments = await Comment.find({ product: { $in: productIds } })
-        .populate('user', 'firstName lastName email')
-        .populate('product', 'name');
+      const comments = await Comment.find({ product_id: { $in: productIds } })
+        .populate('user_id', 'firstName lastName email')
+        .populate('product_id', 'name');
 
       res.status(200).json({ success: true, count: comments.length, data: comments });
     } catch (error) {
@@ -118,8 +118,8 @@ class CommentController {
   async getAllComments(req, res) {
     try {
       const comments = await Comment.find()
-        .populate('user', 'firstName lastName email')
-        .populate('product', 'name');
+        .populate('user_id', 'firstName lastName email')
+        .populate('product_id', 'name');
 
       res.status(200).json({ success: true, count: comments.length, data: comments });
     } catch (error) {
