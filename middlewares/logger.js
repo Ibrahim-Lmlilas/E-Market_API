@@ -14,7 +14,7 @@ function logger(req, res, next){
     const url=req.url;
     const time=new Date().getFullYear();
     console.log(method,url,time);
-   writeToFile('friends.txt', method+" "+url+" "+time);
+   writeToFile('logger.txt', method+" "+url+" "+time);
      next();
 }
 module.exports=logger;
