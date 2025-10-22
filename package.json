@@ -9,7 +9,7 @@
     "setup-roles": "node scripts/createRoles.js",
     "setup-categories": "node scripts/createCategories.js",
     "setup-products": "node scripts/createProducts.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --timeout 10000 --exit test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,10 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "chai": "^4.5.0",
+    "chai-http": "^5.1.2",
+    "mocha": "^11.7.4",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
   }
 }
