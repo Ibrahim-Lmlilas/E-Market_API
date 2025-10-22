@@ -7,10 +7,10 @@ const { cartSchema, UpdateCartItemSchema } = require('../utils/validationSchema'
 
 
 
-router.get('/api/carts/:userId', protect, cartController.getCartByUserId);
-router.post('/api/carts', protect, cartController.createCart);
+router.get('/api/v2/carts/:userId', protect, cartController.getCartByUserId);
+router.post('/api/v2/carts', protect, cartController.createCart);
 
-router.get('/api/carts/:cartId/items', protect, cartController.getCartItemsByCartId);
-router.post('/api/carts/:cartId/items', protect, validator(cartSchema), cartController.addCartItem);
-router.put('/api/carts/:cartId/items/:cartItemId', protect, validator(UpdateCartItemSchema), cartController.updateCartItem);
-router.delete('/api/carts/:cartId/items/:cartItemId', protect, cartController.deleteCartItem);
+router.get('/api/v2/carts/:cartId/items', protect, cartController.getCartItemsByCartId);
+router.post('/api/v2/carts/:cartId/items', protect, validator(cartSchema), cartController.addCartItem);
+router.put('/api/v2/carts/:cartId/items/:cartItemId', protect, validator(UpdateCartItemSchema), cartController.updateCartItem);
+router.delete('/api/v2/carts/:cartId/items/:cartItemId', protect, cartController.deleteCartItem);

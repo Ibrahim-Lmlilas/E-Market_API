@@ -40,7 +40,7 @@ const { protect, adminOnly } = require('../middlewares/auth');
  *       500:
  *         description: Server error.
  */
-router.post('/request-role-change', protect, requestController.createRequest);
+router.post('/v2/request-role-change', protect, requestController.createRequest);
 
 
 /**
@@ -88,7 +88,7 @@ router.post('/request-role-change', protect, requestController.createRequest);
  *       403:
  *         description: Forbidden (Admin only).
  */
-router.get('/', protect, adminOnly, requestController.getAllRequests);
+router.get('/v2', protect, adminOnly, requestController.getAllRequests);
 
 
 /**
@@ -117,7 +117,7 @@ router.get('/', protect, adminOnly, requestController.getAllRequests);
  *       404:
  *         description: Request not found.
  */
-router.post('/:id/approve', protect, adminOnly, requestController.approveRequest);
+router.post('/v2/:id/approve', protect, adminOnly, requestController.approveRequest);
 
 
 /**
@@ -146,7 +146,7 @@ router.post('/:id/approve', protect, adminOnly, requestController.approveRequest
  *       404:
  *         description: Request not found.
  */
-router.post('/:id/reject', protect, adminOnly, requestController.rejectRequest);
+router.post('/v2/:id/reject', protect, adminOnly, requestController.rejectRequest);
 
 
 /**
@@ -188,6 +188,6 @@ router.post('/:id/reject', protect, adminOnly, requestController.rejectRequest);
  *       404:
  *         description: User not found.
  */
-router.post('/:id/change-role', protect, adminOnly, requestController.directChangeRole);
+router.post('/v2/:id/change-role', protect, adminOnly, requestController.directChangeRole);
 
 module.exports = router;

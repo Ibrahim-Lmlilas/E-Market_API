@@ -37,7 +37,7 @@ const { CommentSchema } = require('../utils/validationSchema');
  *       403:
  *         description: Forbidden (not admin)
  */
-router.get('/', protect, adminOnly, commentController.getAllComments);
+router.get('/v2', protect, adminOnly, commentController.getAllComments);
 
 /**
  * @swagger
@@ -73,7 +73,7 @@ router.get('/', protect, adminOnly, commentController.getAllComments);
  *       404:
  *         description: Product not found
  */
-router.get('/product/:productId', commentController.getCommentsByProduct);
+router.get('/v2/product/:productId', commentController.getCommentsByProduct);
 
 /**
  * @swagger
@@ -108,7 +108,7 @@ router.get('/product/:productId', commentController.getCommentsByProduct);
  *       401:
  *         description: Unauthorized
  */
-router.post('/', protect, commentController.createComment);
+router.post('/v2', protect, commentController.createComment);
 
 /**
  * @swagger
@@ -139,7 +139,7 @@ router.post('/', protect, commentController.createComment);
  *       404:
  *         description: Comment not found
  */
-router.put('/:id', protect, validator.validate(CommentSchema), commentController.updateComment);
+router.put('/v2/:id', protect, validator.validate(CommentSchema), commentController.updateComment);
 
 /**
  * @swagger
@@ -164,7 +164,7 @@ router.put('/:id', protect, validator.validate(CommentSchema), commentController
  *       404:
  *         description: Comment not found
  */
-router.delete('/:id', protect, commentController.deleteComment);
+router.delete('/v2/:id', protect, commentController.deleteComment);
 
 /**
  * @swagger
@@ -182,6 +182,6 @@ router.delete('/:id', protect, commentController.deleteComment);
  *       403:
  *         description: Forbidden (not seller)
  */
-router.get('/seller/my-products', protect, isSeller, commentController.getSellerProductComments);
+router.get('/v2/seller/my-products', protect, isSeller, commentController.getSellerProductComments);
 
 module.exports = router;
