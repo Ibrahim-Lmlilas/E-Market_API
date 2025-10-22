@@ -1,0 +1,3 @@
+{"level":"info","message":"::1 - - [21/Oct/2025:15:33:03 +0000] \"GET / HTTP/1.1\" 200 133 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","timestamp":"2025-10-21T15:33:03.297Z"}
+{"level":"info","message":"Homepage visited","timestamp":"2025-10-21T15:33:08.758Z"}
+{"level":"info","message":"::1 - - [21/Oct/2025:15:33:08 +0000] \"GET /fouad HTTP/1.1\" 200 13 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36\"","timestamp":"2025-10-21T15:33:08.761Z"}

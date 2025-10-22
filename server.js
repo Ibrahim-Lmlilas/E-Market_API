@@ -2,8 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
+const morgan = require('morgan');
 require('dotenv').config();
-
+const logger = require('./utils/logger');
 const ResponseHandler = require('./utils/responseHandler');
 
 const authRoutes = require('./routes/authRoutes');
@@ -25,6 +26,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(ResponseHandler.logger);
+
+
+// utilisation morgan avec winston 
+app.use(morgan('combined', {
+  stream: {
+    write: (message) => logger.info(message.trim())
+  }
+}));
+
+
+app.get('/fouad', (req, res) => {
+  res.send('Hello Logger!');
+  logger.info('Homepage visited');
+});
 
 // ---------------------Routes--------------------------
 app.get('/', (req, res) => {

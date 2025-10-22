@@ -40,7 +40,7 @@ const { updateprofile, passwordSchema } = require('../utils/validationSchema');
  *       500:
  *         description: Server error.
  */
-router.put('/edit', protect, validator.validate(updateprofile), async (req, res) => {
+router.put('/v2/edit', protect, validator.validate(updateprofile), async (req, res) => {
   const controller = new profileController();
   try {
     await controller.editProfile(req, res);
@@ -83,7 +83,7 @@ router.put('/edit', protect, validator.validate(updateprofile), async (req, res)
  *       500:
  *         description: Server error.
  */
-router.put('/change-password', protect, validator.validate(passwordSchema), async (req, res) => {
+router.put('/v2/change-password', protect, validator.validate(passwordSchema), async (req, res) => {
   try {
     const controller = new profileController();
     await controller.changePassword(req, res);
@@ -111,7 +111,7 @@ router.put('/change-password', protect, validator.validate(passwordSchema), asyn
  *       500:
  *         description: Server error.
  */
-router.get('/me', protect, async (req, res) => {
+router.get('/v2/me', protect, async (req, res) => {
   try {
     const controller = new profileController();
     await controller.getProfile(req, res);
