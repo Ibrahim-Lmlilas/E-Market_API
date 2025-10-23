@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 require('dotenv').config();
+const securityMiddleware = require('./middlewares/security'); 
 
 const ResponseHandler = require('./utils/responseHandler');
 
@@ -14,6 +15,7 @@ const requestRoutes = require('./routes/requestRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const couponRoutes = require('./routes/couponRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const limitRoutes = require('./routes/testRoutes');
 
 require('./models/User');
 require('./models/Role');
@@ -22,6 +24,8 @@ require('./models/Category');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+securityMiddleware(app);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -52,14 +56,17 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customSiteTitle: 'E-Market API Documentation'
 }));
 
-app.use('/api/auth', authRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/profiles', profileRoutes);
-app.use('/api/request', requestRoutes);
-app.use('/api/carts', cartRoutes);
-app.use('/api/coupons', couponRoutes);
-app.use('/api/orders', orderRoutes);
+const rateLimiter = require('./middlewares/rateLimiter'); 
+
+app.use('/api/auth', rateLimiter(5, 15), authRoutes);
+app.use('/api/categories', rateLimiter(5, 30), categoryRoutes);
+app.use('/api/products', rateLimiter(5, 40), productRoutes);
+app.use('/api/profiles', rateLimiter(5, 10), profileRoutes);
+app.use('/api/request', rateLimiter(5, 10), requestRoutes);
+app.use('/api/carts', rateLimiter(5, 40), cartRoutes);
+app.use('/api/coupons', rateLimiter(5, 40), couponRoutes);
+app.use('/api/orders', rateLimiter(5, 20), orderRoutes);
+app.use('/api/limits', rateLimiter(1, 2), limitRoutes);
 
 // in case route not found
 app.use(ResponseHandler.notFound);
