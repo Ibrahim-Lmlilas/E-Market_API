@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const imageService = require('../services/imageService');
 
 // Create upload directory
 const uploadDir = 'uploads/products';
@@ -8,19 +9,8 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Storage configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    // Generate unique filename: timestamp-random-originalname
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    const name = path.basename(file.originalname, ext);
-    cb(null, `${name}-${uniqueSuffix}${ext}`);
-  }
-});
+// Memory storage for Sharp processing
+const storage = multer.memoryStorage();
 
 // File filter - only images
 const fileFilter = (req, file, cb) => {
@@ -35,7 +25,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit per file
+    fileSize: 10 * 1024 * 1024, // 10MB limit per file (increased for Sharp processing)
     files: 7 // Maximum 7 files
   },
   fileFilter: fileFilter
@@ -44,14 +34,14 @@ const upload = multer({
 // Multiple images upload middleware
 const uploadImages = upload.array('images', 7);
 
-// Enhanced middleware with error handling
-const uploadImageMiddleware = (req, res, next) => {
-  uploadImages(req, res, function (err) {
+// Enhanced middleware with Sharp processing
+const uploadImageMiddleware = async (req, res, next) => {
+  uploadImages(req, res, async function (err) {
     if (err instanceof multer.MulterError) {
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({
           success: false,
-          message: 'File too large. Maximum size is 5MB per file'
+          message: 'File too large. Maximum size is 10MB per file'
         });
       }
       if (err.code === 'LIMIT_FILE_COUNT') {
@@ -71,16 +61,38 @@ const uploadImageMiddleware = (req, res, next) => {
       });
     }
     
-    // Process uploaded files
+    // Process uploaded files with Sharp
     if (req.files && req.files.length > 0) {
-      req.body.uploadedImages = req.files.map((file, index) => ({
-        url: `/uploads/products/${file.filename}`,
-        isMain: index === 0, // First image is main
-        filename: file.filename,
-        originalName: file.originalname,
-        size: file.size,
-        mimetype: file.mimetype
-      }));
+      try {
+        // Process all images with Sharp
+        const processedImages = await imageService.processMultipleImages(req.files);
+        
+        // Format for the controller (compatible with existing model)
+        req.body.uploadedImages = processedImages.map((processed, index) => ({
+          // Original image data (compatible with existing model)
+          url: processed.original.url,
+          isMain: index === 0, // First image is main
+          filename: processed.original.filename,
+          originalName: processed.original.originalName,
+          size: processed.original.size,
+          mimetype: processed.original.mimetype,
+          
+          // Additional Sharp data (stored as extra fields)
+          sharpData: {
+            sizes: processed,
+            urls: imageService.getImageUrls(processed)
+          }
+        }));
+        
+        console.log(`✅ Processed ${req.files.length} images with Sharp`);
+        
+      } catch (error) {
+        console.error('❌ Sharp processing error:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Image processing failed: ' + error.message
+        });
+      }
     }
     
     next();
