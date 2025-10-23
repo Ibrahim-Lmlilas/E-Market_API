@@ -76,35 +76,36 @@ const productSchema = new mongoose.Schema({
     }
   },
   
-  imageUrl: {
-    type: String,
-    trim: true,
-    validate: {
-      validator: function(url) {
-        if (!url) return true; 
-        // يقبل أي URL يبدا ب http:// أو https://
-        return /^https?:\/\/.+/i.test(url);
+  images: {
+    type: [{
+      url: {
+        type: String,
+        required: true,
+        trim: true,
+        validate: {
+          validator: function(url) {
+            // Accept both uploaded paths (/uploads/...) and external URLs (http://...)
+            return /^(\/uploads\/|https?:\/\/).+/i.test(url);
+          },
+          message: 'Please provide a valid image URL or upload path'
+        }
       },
-      message: 'Please provide a valid image URL'
-    }
-  },
-  
-  uploadedImage: {
-    filename: {
-      type: String,
-      trim: true
-    },
-    originalName: {
-      type: String,
-      trim: true
-    },
-    size: {
-      type: Number,
-      min: 0
-    },
-    mimetype: {
-      type: String,
-      trim: true
+      isMain: {
+        type: Boolean,
+        default: false
+      },
+      filename: String,        // For uploaded files
+      originalName: String,    // Original filename
+      size: Number,            // File size in bytes
+      mimetype: String         // File MIME type
+    }],
+    required: [true, 'At least one image is required'],
+    validate: {
+      validator: function(images) {
+        // At least 1 image required, max 7 images
+        return images && images.length >= 1 && images.length <= 7;
+      },
+      message: 'Product must have between 1 and 7 images'
     }
   },
   
@@ -174,7 +175,7 @@ const productSchema = new mongoose.Schema({
   versionKey: false 
 });
 
-productSchema.index({ uuid: 1 }, { unique: true });
+// Performance indexes (uuid unique already defined in schema)
 productSchema.index({ category: 1 });
 productSchema.index({ seller: 1 });
 productSchema.index({ status: 1 });
@@ -255,18 +256,33 @@ productSchema.methods.softDelete = function() {
   return this.save();
 };
 
-productSchema.methods.getImageUrl = function() {
-  if (this.imageUrl) {
-    if (this.imageUrl.startsWith('/uploads/')) {
-      return `${process.env.BASE_URL || 'http://localhost:3000'}${this.imageUrl}`;
-    }
-    return this.imageUrl;
-  }
-  return null;
+// Get main image (first image or first marked as main)
+productSchema.methods.getMainImage = function() {
+  if (!this.images || this.images.length === 0) return null;
+  
+  // Find image marked as main
+  const mainImage = this.images.find(img => img.isMain);
+  if (mainImage) return mainImage;
+  
+  // Return first image as default main
+  return this.images[0];
 };
 
-productSchema.methods.hasImage = function() {
-  return !!this.imageUrl;
+// Get full URLs for all images
+productSchema.methods.getImageUrls = function() {
+  if (!this.images || this.images.length === 0) return [];
+  
+  return this.images.map(img => {
+    if (img.url.startsWith('/uploads/')) {
+      return `${process.env.BASE_URL || 'http://localhost:3000'}${img.url}`;
+    }
+    return img.url;
+  });
+};
+
+// Check if product has images
+productSchema.methods.hasImages = function() {
+  return this.images && this.images.length > 0;
 };
 
 // Simple static methods
@@ -304,6 +320,12 @@ productSchema.methods.toJSON = function() {
     product.discountAmount = this.getDiscountAmount();
     product.discountPercentage = this.getDiscountPercentage();
     product.formattedFinalPrice = this.getFormattedFinalPrice();
+  }
+  
+  // Add main image info
+  if (this.hasImages()) {
+    product.mainImage = this.getMainImage();
+    product.imageUrls = this.getImageUrls();
   }
   
   return product;
