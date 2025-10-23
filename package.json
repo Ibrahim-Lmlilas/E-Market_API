@@ -11,7 +11,7 @@
     "setup-products": "node scripts/createProducts.js",
     "test": "mocha",
     "test:watch": "mocha --watch",
-    "test:coverage": "mocha --reporter json > test-results.json"
+    "test:coverage": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -45,6 +45,19 @@
     "mocha": "^11.7.4",
     "mongodb-memory-server": "^9.5.0",
     "nodemon": "^3.1.10",
+    "nyc": "^17.1.0",
     "supertest": "^7.1.4"
+  },
+  "nyc": {
+    "include": [
+      "controllers/*.js",
+      "models/*.js",
+      "services/*.js"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "all": true
   }
 }
