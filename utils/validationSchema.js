@@ -150,7 +150,7 @@ module.exports = {
     promotionSchema,
     CategorySchema,
     updateprofile,
-   CartItemSchema,
-  UpdateCartItemSchema,
+    CartItemSchema,
+    UpdateCartItemSchema,
     passwordSchema 
 };

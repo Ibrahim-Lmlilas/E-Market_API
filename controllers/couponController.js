@@ -1,4 +1,4 @@
-const CouponService = require("../services/couponService");
+const CouponService = require("../services/CouponService");
 
 class CouponController {
     async createCoupon(req, res) {
@@ -60,4 +60,4 @@ class CouponController {
     }
 }
 
-modules.exports = new CouponController();
+module.exports = new CouponController();
