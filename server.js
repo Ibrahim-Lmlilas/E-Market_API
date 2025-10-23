@@ -9,6 +9,8 @@ const ResponseHandler = require('./utils/responseHandler');
 const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
+const profileRoutes = require('./routes/profileRoutes');
+const requestRoutes = require('./routes/requestRoutes');
 
 require('./models/User');
 require('./models/Role');
@@ -50,6 +52,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/profiles', profileRoutes);
+app.use('/api/request', requestRoutes);
 
 // in case route not found
 app.use(ResponseHandler.notFound);

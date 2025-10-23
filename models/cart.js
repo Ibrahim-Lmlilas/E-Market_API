@@ -23,6 +23,11 @@ const cartSchema = new mongoose.Schema({
     default: false
   },
 
+  coupon: {
+    type: String,
+    default: null
+  },
+
   type: {
     type:String,
     enum: ['Cart', 'Order'],
@@ -48,6 +53,6 @@ cartSchema.pre('findOneAndDelete', async function(next) {
   next();
 });
 
-const Cart = mongoose.model('User', cartSchema);
+const Cart = mongoose.model('Cart', cartSchema);
 
 module.exports = Cart;

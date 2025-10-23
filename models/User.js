@@ -104,8 +104,7 @@ const userSchema = new mongoose.Schema({
   versionKey: false 
 });
 
-userSchema.index({ email: 1 }, { unique: true });
-userSchema.index({ uuid: 1 }, { unique: true });
+// Index for performance (unique already defined in schema)
 userSchema.index({ role: 1 });
 userSchema.index({ nickname: 1 });
 
@@ -137,8 +136,8 @@ userSchema.methods.getInitials = function() {
   return (this.firstName.charAt(0) + this.lastName.charAt(0)).toUpperCase();
 };
 
-userSchema.methods.isAdmin = async function() {
-  await this.populate('role');
+userSchema.methods.isAdmin = function() {
+  // No need to populate again, role is already populated in protect middleware
   return this.role && this.role.name === 'ADMIN';
 };
 
