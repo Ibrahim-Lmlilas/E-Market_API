@@ -164,25 +164,31 @@ class ProductController {
         .populate("category", "title slug")
         .populate("seller", "firstName lastName email");
 
-      if (!product || product.isDeleted) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-        });
-      }
+    //   if (!product || product.isDeleted) {
+    //     return res.status(404).json({
+    //       success: false,
+    //       message: "Product not found",
+    //     });
+    //   }
 
       // Check if product is visible to public
-      if (product.status !== "published" || !product.isVisible) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-        });
-      }
+    //   if (product.status !== "published" || !product.isVisible) {
+    //     return res.status(404).json({
+    //       success: false,
+    //       message: "Product not found",
+    //     });
+    //   }
 
-      res.status(200).json({
-        success: true,
-        data: product,
-      });
+    if (!product || product.isDeleted || product.status !== 'published' || !product.isVisible) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+        const responseData = { success: true, data: product };
+    
+    // 🟢 Store in Redis
+    await redisClient.set(`product_${req.params.id}`, JSON.stringify(responseData));
+
+      res.status(200).json({responseData});
     } catch (error) {
       res.status(500).json({
         success: false,
