@@ -6,6 +6,8 @@ require('dotenv').config();
 
 const createUsers = async () => {
   try {
+    const salt = await bcrypt.genSalt(10);
+
     await mongoose.connect(process.env.MONGODB_URI);
 
     await User.deleteMany({});
@@ -18,7 +20,7 @@ const createUsers = async () => {
       firstName: 'Admin',
       lastName: 'User',
       email: 'admin@gmail.com',
-      password: await bcrypt.hash('admin@gmail.com', 10),
+      password: 'admin@gmail.com',
       role: findRole('ADMIN')
     });
 
@@ -26,7 +28,7 @@ const createUsers = async () => {
       firstName: 'Seller',
       lastName: 'User',
       email: 'seller@gmail.com',
-      password: await bcrypt.hash('seller@gmail.com', 10),
+      password: 'seller@gmail.com',
       role: findRole('SELLER')
     });
 
@@ -34,7 +36,7 @@ const createUsers = async () => {
       firstName: 'Regular',
       lastName: 'User',
       email: 'user@gmail.com',
-      password: await bcrypt.hash('user@gmail.com', 10),
+      password: 'user@gmail.com',
       role: findRole('USER')
     });
 

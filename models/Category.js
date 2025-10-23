@@ -83,7 +83,6 @@ categorySchema.statics.findBySlug = function(slug) {
 // Simple toJSON
 categorySchema.methods.toJSON = function() {
   const category = this.toObject();
-  delete category._id;
   return category;
 };
 
