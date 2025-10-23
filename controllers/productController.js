@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const { redisClient } = require('../server');
 
 class ProductController {
   // Public endpoint - Only published & visible products with pagination
@@ -248,6 +249,11 @@ class ProductController {
       await product.populate("category", "title slug");
       await product.populate("seller", "firstName lastName email");
 
+       // 🧠 Clear old cache (important!)
+      await redisClient.del("products"); // Clear all products cache
+      await redisClient.del(`category_${category}`); // Optional: clear cache for this category
+
+
       res.status(201).json({
         success: true,
         message: "Product created successfully",
@@ -330,6 +336,21 @@ class ProductController {
       )
         .populate("category", "title slug")
         .populate("seller", "firstName lastName email");
+
+        
+      // 🧠 Clear outdated cache
+      await redisClient.del("products"); // remove cached list of all products
+      await redisClient.del(`product_${req.params.id}`); // remove cached single product
+      if (category) await redisClient.del(`category_${category}`); // optional, if you cache products by category
+
+      // 🧠 Optionally, update the single product cache with fresh data
+      await redisClient.set(
+        `product_${req.params.id}`,
+        JSON.stringify({
+          success: true,
+          data: product,
+        })
+      );
 
       res.status(200).json({
         success: true,
