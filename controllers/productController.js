@@ -380,6 +380,14 @@ class ProductController {
       product.deletedAt = new Date();
       await product.save();
 
+         //  Clear outdated cache
+      await redisClient.del("products"); // remove cached list of all products
+      await redisClient.del(`product_${req.params.id}`); // remove cached single product
+
+      // Optional: if you cache by category or seller
+      if (product.category) await redisClient.del(`category_${product.category}`);
+      if (product.seller) await redisClient.del(`seller_${product.seller}`);
+
       res.status(200).json({
         success: true,
         message: "Product deleted successfully",
