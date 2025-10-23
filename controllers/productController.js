@@ -400,34 +400,84 @@ class ProductController {
     }
   }
 
-  async searchProduct(req, res) {
-    const { column, value } = req.query;
+//   async searchProduct(req, res) {
+//     const { column, value } = req.query;
 
-    if (column == "category") {
+//     if (column == "category") {
+//       const category = await Category.findOne({ slug: value });
+//       value = category._id;
+//     }
+
+//     try {
+//       const product = await Product.findOne({ [column]: value });
+
+//       if (!product || product.isDeleted) {
+//         return res.status(404).json({
+//           success: false,
+//           message: "Product not found",
+//         });
+//       }
+//       res.status(200).json({
+//         success: true,
+//         data: product,
+//       });
+//     } catch (error) {
+//       res.status(500).json({
+//         success: false,
+//         message: error.message,
+//       });
+//     }
+//   }
+
+async searchProduct(req, res) {
+  let { column, value } = req.query;
+
+  try {
+    if (column === "category") {
       const category = await Category.findOne({ slug: value });
+      if (!category) {
+        return res.status(404).json({
+          success: false,
+          message: "Category not found",
+        });
+      }
       value = category._id;
     }
 
-    try {
-      const product = await Product.findOne({ [column]: value });
+    // cache key
+    const cacheKey = `search_${column}_${value}`;
 
-      if (!product || product.isDeleted) {
-        return res.status(404).json({
-          success: false,
-          message: "Product not found",
-        });
-      }
-      res.status(200).json({
-        success: true,
-        data: product,
-      });
-    } catch (error) {
-      res.status(500).json({
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return res.status(200).json(JSON.parse(cachedData));
+    }
+
+    const product = await Product.findOne({ [column]: value });
+
+    if (!product || product.isDeleted) {
+      return res.status(404).json({
         success: false,
-        message: error.message,
+        message: "Product not found",
       });
     }
+
+    const response = {
+      success: true,
+      data: product,
+    };
+
+   
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
+}
+
 }
 
 module.exports = new ProductController();
