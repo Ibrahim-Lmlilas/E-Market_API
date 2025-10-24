@@ -3,22 +3,33 @@ const Category = require('../models/Category');
 class CategoryController {
 
     async getAllCategories(req, res) {
-        try {
-            const categories = await Category.find({ isDeleted: false });
-            
-            res.status(200).json({
-                success: true,
-                count: categories.length,
-                data: categories
-            });
-            
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: error.message
-            });
-        }
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const skip = (page - 1) * limit;
+
+        const categories = await Category.find({ isDeleted: false })
+        .skip(skip)
+        .limit(limit);
+
+        const total = await Category.countDocuments({ isDeleted: false });
+
+        res.status(200).json({
+        success: true,
+        page,
+        totalPages: Math.ceil(total / limit),
+        count: categories.length,
+        data: categories
+        });
+
+    } catch (error) {
+        res.status(500).json({
+        success: false,
+        message: error.message
+        });
     }
+    }
+
 
     async getCategoryById(req, res) {
         try {

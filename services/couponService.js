@@ -3,141 +3,141 @@ const CartService = require('./CartService');
 
 class CouponService {
 
-    async createCoupon({ code, type, discount, expirationDate, category_id, user_id, usesLeft }) {
-        const coupon = new Coupon({
-            code,
-            type,
-            discount,
-            expirationDate,
-            category_id,
-            user_id,
-            usesLeft
-        });
-        
-        await coupon.save();
-        return coupon;
-    }
+	async createCoupon({ code, type, discount, expirationDate, category_id, user_id, usesLeft }) {
+		const coupon = new Coupon({
+			code,
+			type,
+			discount,
+			expirationDate,
+			category_id,
+			user_id,
+			usesLeft
+		});
 
-    async getAllCoupons() {
-        const coupons = await Coupon.find({ isDeleted: false });
-        return coupons;
-    }
+		await coupon.save();
+		return coupon;
+	}
 
-    async getCouponById(couponId) {
-        const coupon = await Coupon.findOne({_id: couponId, isDeleted: false});
-        return coupon ? coupon : null;
-    }
+	async getAllCoupons() {
+		const coupons = await Coupon.find({ isDeleted: false });
+		return coupons;
+	}
 
-    async getCouponByCode(code) {
-        const coupon = await Coupon.findOne({ code: code.toUpperCase(), isDeleted: false });
-        return coupon;
-    }
-    
-    async deleteCoupon(couponId) {
-        const coupon = await Coupon.findById(couponId);
-        if (!coupon) return null;
+	async getCouponById(couponId) {
+		const coupon = await Coupon.findOne({ _id: couponId, isDeleted: false });
+		return coupon ? coupon : null;
+	}
 
-        coupon.isDeleted = true;
-        coupon.deletedAt = new Date();
-        await coupon.save();
-        return coupon;
-    }
+	async getCouponByCode(code) {
+		const coupon = await Coupon.findOne({ code: code.toUpperCase(), isDeleted: false });
+		return coupon;
+	}
 
-    async updateCoupon(couponId, data) {
-        const coupon = await Coupon.findOne({_id: couponId, isDeleted: false});
+	async deleteCoupon(couponId) {
+		const coupon = await Coupon.findById(couponId);
+		if (!coupon) return null;
 
-        if (!coupon) return null;
+		coupon.isDeleted = true;
+		coupon.deletedAt = new Date();
+		await coupon.save();
+		return coupon;
+	}
 
-        if (coupon.isDeleted) return null;
+	async updateCoupon(couponId, data) {
+		const coupon = await Coupon.findOne({ _id: couponId, isDeleted: false });
 
-        if (data.type) {
-            coupon.type = data.type;
-            coupon.discount = data.discount;
-        }
-        if (data.discount) {
-            coupon.discount = data.discount;
-        }
-        if (data.code) {
-            coupon.code = data.code;
-        }
-        if (data.expirationDate) {
-            coupon.expirationDate = data.expirationDate;
-        }
-        if (data.category_id) {
-            coupon.category_id = data.category_id;
-        }
-        if (data.usesLeft !== undefined) {
-            coupon.usesLeft = data.usesLeft;
-        }
-        await coupon.save();
-        return coupon;
-    }
+		if (!coupon) return null;
 
-    async validateCoupon(code, categoryId) {
-        const coupon = await this.getCouponByCode(code);
+		if (coupon.isDeleted) return null;
 
-        if (!coupon) return {
-            valid: false, message: 'Coupon not found'
-        }
+		if (data.type) {
+			coupon.type = data.type;
+			coupon.discount = data.discount;
+		}
+		if (data.discount) {
+			coupon.discount = data.discount;
+		}
+		if (data.code) {
+			coupon.code = data.code;
+		}
+		if (data.expirationDate) {
+			coupon.expirationDate = data.expirationDate;
+		}
+		if (data.category_id) {
+			coupon.category_id = data.category_id;
+		}
+		if (data.usesLeft !== undefined) {
+			coupon.usesLeft = data.usesLeft;
+		}
+		await coupon.save();
+		return coupon;
+	}
 
-        if (coupon.isDeleted) return {
-            valid: false, message: 'Coupon is deleted' 
-        }
-        
-        if (coupon.usesLeft <= 0) return {
-            valid: false, message: 'Coupon has no remaining uses' 
-        }
-        
-        if (new Date() > new Date(coupon.expirationDate)) return { 
-            valid: false, message: 'Coupon has expired' 
-        }
-        
-        if (coupon.category_id.toString() !== categoryId.toString()) {
-            return { valid: false, message: 'Coupon not applicable to this category' };
-        }
+	async validateCoupon(code, categoryId) {
+		const coupon = await this.getCouponByCode(code);
 
-        return { valid: true, coupon };
-    }
+		if (!coupon) return {
+			valid: false, message: 'Coupon not found'
+		}
 
-    async decrementCouponUse(couponId) {
-        const coupon = await Coupon.findById(couponId);
-        if (!coupon) return false;
+		if (coupon.isDeleted) return {
+			valid: false, message: 'Coupon is deleted'
+		}
 
-        if (coupon.usesLeft > 0) {
-            coupon.usesLeft -= 1;
-            await coupon.save();
-            return true;
-        }
-        return false;
-    }
+		if (coupon.usesLeft <= 0) return {
+			valid: false, message: 'Coupon has no remaining uses'
+		}
 
-    async applyCoupon(code, cartId, categoryId) {
+		if (new Date() > new Date(coupon.expirationDate)) return {
+			valid: false, message: 'Coupon has expired'
+		}
 
-        const validation = await this.validateCoupon(code, categoryId);
-        if (!validation.valid) {
-            return null; 
-        }
+		if (coupon.category_id.toString() !== categoryId.toString()) {
+			return { valid: false, message: 'Coupon not applicable to this category' };
+		}
 
-        const coupon = validation.coupon;
+		return { valid: true, coupon };
+	}
 
-        const decremented = await this.decrementCouponUse(coupon._id);
-        if (!decremented) {
-            return { success: false, message: 'Failed to decrement coupon uses' };
-        }
+	async decrementCouponUse(couponId) {
+		const coupon = await Coupon.findById(couponId);
+		if (!coupon) return false;
 
-        const updatedCart = await CartService.applyCoupon(code, cartId);
-        if (!updatedCart) {
-            return { success: false, message: 'Failed to apply coupon to cart' };
-        }
+		if (coupon.usesLeft > 0) {
+			coupon.usesLeft -= 1;
+			await coupon.save();
+			return true;
+		}
+		return false;
+	}
 
-        return {
-            success: true,
-            message: 'Coupon applied successfully',
-            coupon,
-            cart: updatedCart
-        };
+	async applyCoupon(code, cartId, categoryId) {
 
-    }
+		const validation = await this.validateCoupon(code, categoryId);
+		if (!validation.valid) {
+			return null;
+		}
+
+		const coupon = validation.coupon;
+
+		const decremented = await this.decrementCouponUse(coupon._id);
+		if (!decremented) {
+			return { success: false, message: 'Failed to decrement coupon uses' };
+		}
+
+		const updatedCart = await CartService.applyCoupon(code, cartId);
+		if (!updatedCart) {
+			return { success: false, message: 'Failed to apply coupon to cart' };
+		}
+
+		return {
+			success: true,
+			message: 'Coupon applied successfully',
+			coupon,
+			cart: updatedCart
+		};
+
+	}
 
 }
 

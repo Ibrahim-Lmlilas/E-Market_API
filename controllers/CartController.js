@@ -34,7 +34,7 @@ class CartController {
 
     async getCartByLoggedInUser(req, res) {
         const userId = req.user._id;
-        
+
         try {
             const cart = await CartService.getCartByUserId(userId);
             if (!cart) {
@@ -57,38 +57,86 @@ class CartController {
         }
     }
 
-    // items in cart
+
 
     async getCartItemsByCartId(req, res) {
-        const { cartId } = req.params;
         try {
-            const cartItems = await CartItemService.getCartItemsByCartId(cartId);
-            if (!cartItems) {
-                return res.status(404).json({ success: false, message: 'Cart is empty or does not exist' });
-            }
-            res.status(200).json({ success: true, data: cartItems });
+            const { cartId } = req.params;
+            const page = parseInt(req.query.page) || 1;
+            const limit = 10;
+            const skip = (page - 1) * limit;
+
+
+            const cartItems = await CartItem.find({ cart_id: cartId })
+                .populate('product_id', 'title price image')
+                .skip(skip)
+                .limit(limit);
+
+            const totalItems = await CartItem.countDocuments({ cart_id: cartId });
+
+            res.status(200).json({
+                success: true,
+                page,
+                totalPages: Math.ceil(totalItems / limit),
+                count: cartItems.length,
+                data: cartItems
+            });
         } catch (error) {
-            res.status(500).json({ success: false, message: 'error getting cart items' });
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     }
 
-    async getCartItemsByLoggedUser(req, res) {
-        const userId = req.user._id;
-        
-        // return res.status(200).json({ success: true, message: 'Cart items retrieved successfully', data: userId });
 
+    async getCartItemsByLoggedUser(req, res) {
         try {
+            const userId = req.user._id;
+            const page = parseInt(req.query.page) || 1;
+            const limit = 10;
+            const skip = (page - 1) * limit;
+
             const cart = await CartService.getCartByUserId(userId);
             if (!cart) {
-                return res.status(404).json({ success: false, message: 'Cart not found' });
+                return res.status(404).json({
+                    success: false,
+                    message: 'Cart not found'
+                });
             }
-            const cartItems = await CartItemService.getCartItemsByCartId(cart._id);
+
+            const cartItems = await CartItem.find({ cart_id: cart._id })
+                .populate('product_id', 'title price image')
+                .skip(skip)
+                .limit(limit);
+
+            const totalItems = await CartItem.countDocuments({ cart_id: cart._id });
+
             if (cartItems.length === 0) {
-                return res.status(200).json({ success: true, message: 'Cart is empty' });
+                return res.status(200).json({
+                    success: true,
+                    message: 'Cart is empty',
+                    page,
+                    totalPages: 0,
+                    data: []
+                });
             }
-            res.status(200).json({ success: true, data: cartItems });
+
+            res.status(200).json({
+                success: true,
+                message: 'Cart items retrieved successfully',
+                page,
+                totalPages: Math.ceil(totalItems / limit),
+                count: cartItems.length,
+                data: cartItems
+            });
+
         } catch (error) {
-            res.status(500).json({ success: false, message: 'error getting cart items' });
+            res.status(500).json({
+                success: false,
+                message: 'Error retrieving cart items',
+                error: error.message
+            });
         }
     }
 
