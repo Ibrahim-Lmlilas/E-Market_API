@@ -2,9 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
+const morgan = require('morgan');
 require('dotenv').config();
 const securityMiddleware = require('./middlewares/security'); 
 
+const logger = require('./utils/logger');
 const ResponseHandler = require('./utils/responseHandler');
 
 const authRoutes = require('./routes/authRoutes');
@@ -16,6 +18,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const couponRoutes = require('./routes/couponRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const limitRoutes = require('./routes/testRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 
 require('./models/User');
 require('./models/Role');
@@ -31,6 +34,38 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(ResponseHandler.logger);
+
+
+// utilisation morgan avec winston 
+app.use(morgan('combined', {
+  stream: {
+    write: (message) => logger.info(message.trim())
+  }
+}));
+
+
+app.get('/fouad', (req, res) => {
+  res.send('Hello Logger!');
+  logger.info('Homepage visited');
+});
+
+
+//----------------------redis---------------------------
+const redis = require('redis');
+
+const redisClient = redis.createClient();
+
+redisClient.on('error', (err) => console.error('Redis error:', err));
+
+
+const connectRedis = async () => {
+  try {
+    await redisClient.connect();
+    console.log('✅ Connected to Redis');
+  } catch (err) {
+    console.error('❌ Redis connection error:', err);
+  }
+};
 
 // ---------------------Routes--------------------------
 app.get('/', (req, res) => {
@@ -67,6 +102,8 @@ app.use('/api/carts', rateLimiter(5, 40), cartRoutes);
 app.use('/api/coupons', rateLimiter(5, 40), couponRoutes);
 app.use('/api/orders', rateLimiter(5, 20), orderRoutes);
 app.use('/api/limits', rateLimiter(1, 2), limitRoutes);
+app.use('/api/comment',rateLimiter(1, 5), commentRoutes);
+
 
 // in case route not found
 app.use(ResponseHandler.notFound);
@@ -102,6 +139,7 @@ const connectDB = async () => {
 };
 
 const startServer = async () => {
+    await connectRedis(); 
   await connectDB();
   
   app.listen(PORT, () => {
@@ -112,4 +150,4 @@ const startServer = async () => {
 
 startServer();
 
-module.exports = app;
+module.exports =  { app, redisClient };;

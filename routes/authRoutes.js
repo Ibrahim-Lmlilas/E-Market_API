@@ -37,7 +37,7 @@ const { userSchema } = require('../utils/validationSchema');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/register', validator.validate(userSchema), authController.register);
+router.post('/v1/register', validator.validate(userSchema), authController.register);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.post('/register', validator.validate(userSchema), authController.register
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/login', authController.login);
+router.post('/v1/login', authController.login);
 
 /**
  * @swagger
@@ -102,6 +102,6 @@ router.post('/login', authController.login);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/logout', protect, authController.logout);
+router.post('/v1/logout', protect, authController.logout);
 
 module.exports = router;

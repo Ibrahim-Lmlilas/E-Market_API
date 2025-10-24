@@ -14,6 +14,9 @@
     "setup-all": "npm run setup-roles && npm run setup-users && npm run setup-categories && npm run setup-products",
     "clear-setup": "npm run clear-db && npm run setup-roles && npm run setup-users && npm run setup-categories && npm run setup-products",
     "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "test:coverage": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -35,13 +38,36 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
+    "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "redis": "^5.8.3",
     "swagger-jsdoc": "^3.7.0",
+    "sharp": "^0.34.4",
+    "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^8.3.2",
+    "winston": "^3.18.3",
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "chai": "^4.5.0",
+    "chai-http": "^5.1.2",
+    "mocha": "^11.7.4",
+    "mongodb-memory-server": "^9.5.0",
+    "nodemon": "^3.1.10",
+    "nyc": "^17.1.0",
+    "supertest": "^7.1.4"
+  },
+  "nyc": {
+    "include": [
+      "controllers/*.js",
+      "models/*.js",
+      "services/*.js"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "all": true
   }
 }
