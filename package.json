@@ -9,7 +9,9 @@
     "setup-roles": "node scripts/createRoles.js",
     "setup-categories": "node scripts/createCategories.js",
     "setup-products": "node scripts/createProducts.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "test:coverage": "mocha --reporter json > test-results.json"
   },
   "repository": {
     "type": "git",
@@ -28,13 +30,21 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
+    "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "redis": "^5.8.3",
     "swagger-jsdoc": "^3.7.0",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^8.3.2",
+    "winston": "^3.18.3",
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "chai": "^4.5.0",
+    "chai-http": "^5.1.2",
+    "mocha": "^11.7.4",
+    "mongodb-memory-server": "^9.5.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
   }
 }

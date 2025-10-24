@@ -5,6 +5,7 @@ const { protect, adminOnly, sellerOrAdminRole, sellerOrAdmin } = require('../mid
 const validator = require('../middlewares/validationMiddleware');
 const { uploadImageMiddleware } = require('../middlewares/upload');
 const {productSchema} = require('../utils/validationSchema');
+const { cache } = require('../middlewares/cachingMiddleware');
 
 /**
  * @swagger
@@ -39,7 +40,7 @@ const {productSchema} = require('../utils/validationSchema');
  *       200:
  *         description: List of all published products
  */
-router.get('/', productController.getAllProducts);
+router.get('/v1',cache('products'), productController.getAllProducts);
 
 /**
  * @swagger
@@ -78,7 +79,7 @@ router.get('/', productController.getAllProducts);
  *       200:
  *         description: List of all products (admin view)
  */
-router.get('/admin/all', protect, adminOnly, productController.getAllProductsAdmin);
+router.get('/v1/admin/all', protect, adminOnly, productController.getAllProductsAdmin);
 
 /**
  * @swagger
@@ -107,7 +108,7 @@ router.get('/admin/all', protect, adminOnly, productController.getAllProductsAdm
  *       200:
  *         description: List of seller's products
  */
-router.get('/my-products', protect, sellerOrAdminRole, productController.getMyProducts);
+router.get('/v1/my-products', protect, sellerOrAdminRole, productController.getMyProducts);
 
 /**
  * @swagger
@@ -128,7 +129,7 @@ router.get('/my-products', protect, sellerOrAdminRole, productController.getMyPr
  *       404:
  *         description: Product not found
  */
-router.get('/:id', productController.getProductById);
+router.get('/v1/:id', cache((req) => `product_${req.params.id}`), productController.getProductById);
 
 /**
  * @swagger
@@ -165,7 +166,7 @@ router.get('/:id', productController.getProductById);
  *       403:
  *         description: Forbidden (not seller or admin)
  */
-router.post('/', protect, sellerOrAdminRole, uploadImageMiddleware, validator.validate(productSchema), productController.createProduct);
+router.post('/v1', protect, sellerOrAdminRole, uploadImageMiddleware, validator.validate(productSchema), productController.createProduct);
 
 /**
  * @swagger
@@ -198,7 +199,7 @@ router.post('/', protect, sellerOrAdminRole, uploadImageMiddleware, validator.va
  *       404:
  *         description: Product not found
  */
-router.put('/:id', protect, sellerOrAdmin, uploadImageMiddleware, validator.validate(productSchema), productController.updateProduct);
+router.put('/v1/:id', protect, sellerOrAdmin, uploadImageMiddleware, validator.validate(productSchema), productController.updateProduct);
 
 /**
  * @swagger
@@ -225,6 +226,8 @@ router.put('/:id', protect, sellerOrAdmin, uploadImageMiddleware, validator.vali
  *       404:
  *         description: Product not found
  */
-router.delete('/:id', protect, sellerOrAdmin, productController.deleteProduct);
+router.delete('/v1/:id', protect, sellerOrAdmin, productController.deleteProduct);
+
+router.get('/search/:column/:value', productController.searchProduct);
 
 module.exports = router;
