@@ -5,7 +5,7 @@ const { protect, adminOnly } = require('../middlewares/auth');
 const { isSeller } = require('../middlewares/roleMiddleware');
 const validator = require('../middlewares/validationMiddleware');
 const { CommentSchema } = require('../utils/validationSchema');
-
+const { cache } = require('../middlewares/cachingMiddleware');
 /**
  * @swagger
  * /api/comment:
@@ -37,7 +37,7 @@ const { CommentSchema } = require('../utils/validationSchema');
  *       403:
  *         description: Forbidden (not admin)
  */
-router.get('/v2', protect, adminOnly, commentController.getAllComments);
+router.get('/v2', protect, adminOnly, cache('comments_all'), commentController.getAllComments);
 
 /**
  * @swagger
@@ -73,7 +73,7 @@ router.get('/v2', protect, adminOnly, commentController.getAllComments);
  *       404:
  *         description: Product not found
  */
-router.get('/v2/product/:productId', commentController.getCommentsByProduct);
+router.get('/v2/product/:productId', cache((req) => `comments_product_${req.params.productId}`), commentController.getCommentsByProduct);
 
 /**
  * @swagger
@@ -182,6 +182,6 @@ router.delete('/v2/:id', protect, commentController.deleteComment);
  *       403:
  *         description: Forbidden (not seller)
  */
-router.get('/v2/seller/my-products', protect, isSeller, commentController.getSellerProductComments);
+router.get('/v2/seller/my-products', protect, isSeller,  cache((req) => `comments_seller_${req.user._id}`), commentController.getSellerProductComments);
 
 module.exports = router;

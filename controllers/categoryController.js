@@ -1,11 +1,18 @@
 const Category = require('../models/Category');
-
+const { redisClient } = require('../server');
 class CategoryController {
 
     async getAllCategories(req, res) {
         try {
             const categories = await Category.find({ isDeleted: false });
             
+               // cache the result in Redis
+      await redisClient.set('categories', JSON.stringify({
+        success: true,
+        count: categories.length,
+        data: categories
+      }));
+
             res.status(200).json({
                 success: true,
                 count: categories.length,
@@ -30,6 +37,11 @@ class CategoryController {
                     message: 'Category not found'
                 });
             }
+              // cache the single category in Redis
+      await redisClient.set(`category_${req.params.id}`, JSON.stringify({
+        success: true,
+        data: category
+      }));
             
             res.status(200).json({
                 success: true,
@@ -113,7 +125,11 @@ class CategoryController {
             category.isDeleted = true;
             category.deletedAt = new Date();
             await category.save();
-            
+             // remove from cache
+      await redisClient.del(`category_${req.params.id}`);
+      await redisClient.del('categories');
+
+
             res.status(200).json({
                 success: true,
                 message: 'Category deleted successfully'

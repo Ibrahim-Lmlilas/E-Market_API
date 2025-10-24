@@ -41,6 +41,24 @@ app.get('/fouad', (req, res) => {
   logger.info('Homepage visited');
 });
 
+
+//----------------------redis---------------------------
+const redis = require('redis');
+
+const redisClient = redis.createClient();
+
+redisClient.on('error', (err) => console.error('Redis error:', err));
+
+
+const connectRedis = async () => {
+  try {
+    await redisClient.connect();
+    console.log('✅ Connected to Redis');
+  } catch (err) {
+    console.error('❌ Redis connection error:', err);
+  }
+};
+
 // ---------------------Routes--------------------------
 app.get('/', (req, res) => {
   res.json({
@@ -106,6 +124,7 @@ const connectDB = async () => {
 };
 
 const startServer = async () => {
+    await connectRedis(); 
   await connectDB();
   
   app.listen(PORT, () => {
@@ -116,4 +135,4 @@ const startServer = async () => {
 
 startServer();
 
-module.exports = app;
+module.exports =  { app, redisClient };;

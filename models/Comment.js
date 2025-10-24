@@ -2,17 +2,17 @@ const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema(
   {
-    user: {
+    user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
-    product: {
+    product_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Product',
       required: true,
     },
-    text: {
+    commentaire: {
       type: String,
       required: true,
       trim: true,
@@ -23,6 +23,6 @@ const commentSchema = new mongoose.Schema(
 );
 
 // 
-commentSchema.index({ user: 1, product: 1 }, { unique: true });
+commentSchema.index({ user_id: 1, product_id: 1 }, { unique: true });
 
 module.exports = mongoose.model('Comment', commentSchema);
