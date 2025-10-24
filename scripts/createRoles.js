@@ -9,11 +9,7 @@ const createRoles = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     
     // Check if roles exist
-    const count = await Role.countDocuments();
-    if (count > 0) {
-      console.log('Roles already exist');
-      return;
-    }
+    await Role.deleteMany({});
     
     await Role.create({ name: 'USER' });
     await Role.create({ name: 'ADMIN' });
@@ -21,7 +17,7 @@ const createRoles = async () => {
     await Role.create({ name: 'MODERATOR' });
     await Role.create({ name: 'SUPER_ADMIN' });
 
-    console.log('✅ Roles created successfully!');
+    console.log('Roles created successfully!');
     
   } catch (error) {
     console.error('Error:', error.message);

@@ -6,12 +6,6 @@ const createCategories = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
 
-    // const count = await Category.countDocuments();
-    // if (count > 0) {
-    //   console.log('📦 Categories already exist');
-    //   return;
-    // }
-
     const categories = [
       { title: 'Fitness Equipment' },
       { title: 'Nutrition & Supplements' },
@@ -27,9 +21,9 @@ const createCategories = async () => {
       await category.save();
     }
 
-    console.log('✅ Categories created successfully!');
+    console.log('Categories created successfully!');
   } catch (error) {
-    console.error('❌ Error creating categories:', error.message);
+    console.error('Error creating categories:', error.message);
   } finally {
     await mongoose.connection.close();
   }
