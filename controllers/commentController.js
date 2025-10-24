@@ -5,7 +5,7 @@ class CommentController {
   //  Create a new comment
   async createComment(req, res) {
     try {
-      const { productId, text } = req.body;
+      const { productId, commentaire } = req.body;
 
       if (!text) {
         return res
@@ -34,9 +34,9 @@ class CommentController {
       }
 
       const comment = await Comment.create({
-        user: req.user._id,
-        product: productId,
-        text,
+        user_id: req.user._id,
+        product_id: productId,
+        commentaire,
       });
       // Invalidate cache
       await redisClient.del(`comments_product_${productId}`);
@@ -97,7 +97,7 @@ class CommentController {
         });
       }
 
-      comment.text = req.body.text || comment.text;
+      comment.commentaire = req.body.commentaire || comment.commentaire;
       await comment.save();
       // Invalidate cache
       await redisClient.del(`comments_product_${comment.product}`);
