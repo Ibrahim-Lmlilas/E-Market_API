@@ -5,7 +5,7 @@ const { protect, adminOnly, sellerOrAdminRole, sellerOrAdmin } = require('../mid
 const validator = require('../middlewares/validationMiddleware');
 const { uploadImageMiddleware } = require('../middlewares/upload');
 const {productSchema} = require('../utils/validationSchema');
-const { cache } = require('../middlewares/cachingMiddleware');
+const { cache } = require('../middlewares/CachingMiddleware');
 
 /**
  * @swagger
