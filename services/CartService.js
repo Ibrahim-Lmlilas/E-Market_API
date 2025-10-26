@@ -36,6 +36,14 @@ class CartService {
         let allCoupons = cart.coupon.split(',');
         return allCoupons;
     }
+
+    async cartNotOrder(cartId) {
+        const cart = await Cart.findOne({ _id: cartId, type: 'Cart' });
+        if(!cart){
+            return false;
+        }
+        return cart;
+    }
 }
 
 module.exports = new CartService();

@@ -4,6 +4,7 @@ const categoryController = require('../controllers/categoryController');
 const { protect, adminOnly } = require('../middlewares/auth');
 const validator = require("../middlewares/validationMiddleware");
 const {CategorySchema} = require('../utils/validationSchema');
+const { cache } = require('../middlewares/CachingMiddleware');
 
 /**
  * @swagger
@@ -30,7 +31,7 @@ const {CategorySchema} = require('../utils/validationSchema');
  *                   items:
  *                     $ref: '#/components/schemas/Category'
  */
-router.get('/v1', categoryController.getAllCategories);
+router.get('/v1',cache('categories'), categoryController.getAllCategories);
 
 /**
  * @swagger
@@ -65,7 +66,7 @@ router.get('/v1', categoryController.getAllCategories);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/v1/:id', categoryController.getCategoryById);
+router.get('/v1/:id',cache((req) => `category_${req.params.id}`), categoryController.getCategoryById);
 
 /**
  * @swagger

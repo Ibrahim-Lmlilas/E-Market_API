@@ -1,17 +1,14 @@
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const User = require('../models/User');
 require('dotenv').config();
 
 const createProducts = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
 
-    const count = await Product.countDocuments();
-    if (count > 0) {
-      console.log('🛒 Products already exist');
-      return;
-    }
+    await Product.deleteMany({});
 
     const categories = await Category.find();
     if (categories.length === 0) {
@@ -22,24 +19,42 @@ const createProducts = async () => {
     const getCategoryId = (title) =>
       categories.find((c) => c.title === title)?._id;
 
+    const seller = await User.findOne({ email: 'seller@gmail.com' });
+    if (!seller) {
+      console.log('⚠️ No seller found. Please run createUsers.js first.');
+      return;
+    }
+
     const products = [
       {
         title: 'Adjustable Dumbbell Set',
         description:
           'Durable dumbbell set perfect for home workouts and strength training.',
+        seller: seller._id,
         price: 899,
         stock: 50,
         category: getCategoryId('Fitness Equipment'),
-        imageUrl: 'https://example.com/images/dumbbells.jpg',
+        images: [
+          {
+            url: 'https://example.com/images/bands.jpg',
+            isMain: true,
+          },
+        ],
       },
       {
         title: 'Whey Protein Isolate',
         description:
           'High-quality protein powder to support muscle growth and recovery.',
+        seller: seller._id,
         price: 499,
         stock: 100,
         category: getCategoryId('Nutrition & Supplements'),
-        imageUrl: 'https://example.com/images/protein.jpg',
+        images: [
+          {
+            url: 'https://example.com/images/bands.jpg',
+            isMain: true,
+          },
+        ],
         promotion: {
           isActive: true,
           discountType: 'percentage',
@@ -50,19 +65,31 @@ const createProducts = async () => {
         title: 'Compression T-shirt',
         description:
           'Lightweight and breathable activewear for intense training sessions.',
+        seller: seller._id,
         price: 199,
         stock: 75,
         category: getCategoryId('Activewear'),
-        imageUrl: 'https://example.com/images/shirt.jpg',
+        images: [
+          {
+            url: 'https://example.com/images/bands.jpg',
+            isMain: true,
+          },
+        ],
       },
       {
         title: 'Resistance Bands Set',
         description:
           'Set of 5 high-quality resistance bands with different tension levels.',
+        seller: seller._id,
         price: 129,
         stock: 150,
         category: getCategoryId('Accessories'),
-        imageUrl: 'https://example.com/images/bands.jpg',
+        images: [
+          {
+            url: 'https://example.com/images/bands.jpg',
+            isMain: true,
+          },
+        ],
       },
     ];
 

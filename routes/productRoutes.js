@@ -5,6 +5,7 @@ const { protect, adminOnly, sellerOrAdminRole, sellerOrAdmin } = require('../mid
 const validator = require('../middlewares/validationMiddleware');
 const { uploadImageMiddleware } = require('../middlewares/upload');
 const {productSchema} = require('../utils/validationSchema');
+const { cache } = require('../middlewares/CachingMiddleware');
 
 /**
  * @swagger
@@ -39,7 +40,7 @@ const {productSchema} = require('../utils/validationSchema');
  *       200:
  *         description: List of all published products
  */
-router.get('/v1', productController.getAllProducts);
+router.get('/v1',cache('products'), productController.getAllProducts);
 
 /**
  * @swagger
@@ -128,7 +129,7 @@ router.get('/v1/my-products', protect, sellerOrAdminRole, productController.getM
  *       404:
  *         description: Product not found
  */
-router.get('/v1/:id', productController.getProductById);
+router.get('/v1/:id', cache((req) => `product_${req.params.id}`), productController.getProductById);
 
 /**
  * @swagger

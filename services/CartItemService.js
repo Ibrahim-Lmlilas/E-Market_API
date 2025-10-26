@@ -3,7 +3,10 @@ const CartItem = require('../models/cartItem');
 class CartItemService {
     
     async getCartItemsByCartId(cartId) {
-        const cartItems = await CartItem.find({ cart_id: cartId });
+        const cartItems = await CartItem.find({ cart_id: cartId }).populate('product_id');
+        if (!cartItems) {
+            return false;
+        }
         return cartItems;
     }
 
