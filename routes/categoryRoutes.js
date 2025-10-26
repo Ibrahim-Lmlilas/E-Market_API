@@ -4,7 +4,7 @@ const categoryController = require('../controllers/categoryController');
 const { protect, adminOnly } = require('../middlewares/auth');
 const validator = require("../middlewares/validationMiddleware");
 const {CategorySchema} = require('../utils/validationSchema');
-const { cache } = require('../middlewares/cachingMiddleware');
+const { cache } = require('../middlewares/CachingMiddleware');
 
 /**
  * @swagger

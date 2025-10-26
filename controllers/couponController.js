@@ -1,4 +1,5 @@
 const CouponService = require("../services/CouponService");
+const NotificationService = require('../services/NotificationService');
 
 class CouponController {
     async createCoupon(req, res) {
@@ -10,6 +11,12 @@ class CouponController {
 
         try {
             const newCoupon = await CouponService.createCoupon({ code, type, discount, expirationDate, category_id, user_id, usesLeft });
+
+            // Ajouter une notification pour l'utilisateur associé au coupon
+            if (user_id) {
+                await NotificationService.addNotification(user_id, `A new coupon "${code}" has been created for you.`);
+            }
+
             res.status(201).json({ success: true, message: "Coupon created successfully", data: newCoupon });
         } catch (error) {
             res.status(500).json({ success: false, message: error.message });
