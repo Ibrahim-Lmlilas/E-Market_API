@@ -2,6 +2,7 @@ const CartService = require('../services/CartService');
 const CartItemService = require('../services/CartItemService');
 const Product = require('../models/Product');
 const User = require('../models/User');
+const NotificationService = require('../services/NotificationService');
 
 class CartController {
     async createCart(req, res) {
@@ -13,6 +14,10 @@ class CartController {
             }
 
             const cart = await CartService.createCart(userId);
+
+            // Ajouter une notification pour l'utilisateur
+            await NotificationService.addNotification(userId, 'A new cart has been created for your account.');
+
             res.status(201).json({ success: true, message: 'Cart created successfully', data: cart });
         } catch (error) {
             res.status(500).json({ success: false, message: 'error Creating Cart' });
@@ -159,9 +164,11 @@ class CartController {
 
             if (existingCartItem) {
                 cartItem = await CartItemService.updateCartItem(existingCartItem._id, quantity);
+                await NotificationService.addNotification(req.user._id, `The quantity of the product "${product.title}" in your cart has been updated.`);
             } else {
                 const price = product.price * quantity;
                 cartItem = await CartItemService.createCartItem(cart_id, product_id, quantity, price);
+                await NotificationService.addNotification(req.user._id, `The product "${product.title}" has been added to your cart.`);
             }
 
             res.status(201).json({

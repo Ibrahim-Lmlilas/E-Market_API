@@ -1,4 +1,5 @@
 const OrderService = require('../services/OrderService');
+const NotificationService = require('../services/NotificationService');
 
 class OrderController {
     // Create new order
@@ -8,6 +9,10 @@ class OrderController {
 
         try {
             const order = await OrderService.validateOrder(userId, cartId, couponCode);
+
+            // Notify the user
+            await NotificationService.addNotification(userId, 'Your order has been created successfully.');
+
             res.status(201).json({
                 success: true,
                 message: "Order created successfully",
@@ -110,6 +115,9 @@ class OrderController {
                 return res.status(404).json({ success: false, message: "Order not found or cannot be updated" });
             }
 
+            // Notify the user
+            await NotificationService.addNotification(updatedOrder.user_id, `The status of your order has been updated to: ${status}.`);
+
             res.status(200).json({
                 success: true,
                 message: "Order status updated successfully",
@@ -131,6 +139,9 @@ class OrderController {
             if (!cancelledOrder) {
                 return res.status(404).json({ success: false, message: "Order not found or cannot be cancelled" });
             }
+
+            // Notify the user
+            await NotificationService.addNotification(userId, 'Your order has been cancelled successfully.');
 
             res.status(200).json({
                 success: true,

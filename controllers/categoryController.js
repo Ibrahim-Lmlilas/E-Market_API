@@ -1,5 +1,6 @@
 const Category = require('../models/Category');
 const { redisClient } = require('../server');
+const NotificationService = require('../services/NotificationService');
 class CategoryController {
 
     async getAllCategories(req, res) {
@@ -63,19 +64,22 @@ class CategoryController {
     async createCategory(req, res) {
         try {
             const { title } = req.body;
-            
+
             const category = new Category({
                 title
             });
-            
+
             await category.save();
-            
+
+            // Ajouter une notification pour l'utilisateur
+            await NotificationService.addNotification(req.user.id, `Category "${title}" created successfully.`);
+
             res.status(201).json({
                 success: true,
                 message: 'Category created successfully',
                 data: category
             });
-            
+
         } catch (error) {
             res.status(500).json({
                 success: false,

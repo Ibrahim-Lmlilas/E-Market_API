@@ -1,19 +1,20 @@
 const Comment = require("../models/Comment");
 const Product = require("../models/Product");
 const { redisClient } = require("../server");
+const NotificationService = require('../services/NotificationService');
+
 class CommentController {
   //  Create a new comment
   async createComment(req, res) {
     try {
       const { productId, commentaire } = req.body;
 
-      if (!text) {
+      if (!commentaire) {
         return res
           .status(400)
           .json({ success: false, message: "Comment text is required" });
       }
 
-      //
       const product = await Product.findById(productId);
       if (!product) {
         return res
@@ -21,7 +22,6 @@ class CommentController {
           .json({ success: false, message: "Product not found" });
       }
 
-      //
       const existing = await Comment.findOne({
         user: req.user._id,
         product: productId,
@@ -38,6 +38,15 @@ class CommentController {
         product_id: productId,
         commentaire,
       });
+
+      // Notify the seller of the product
+      if (product.seller) {
+        await NotificationService.addNotification(
+          product.seller,
+          `A new comment has been added to your product: "${product.name}".`
+        );
+      }
+
       // Invalidate cache
       await redisClient.del(`comments_product_${productId}`);
       await redisClient.del("comments_all");
@@ -168,13 +177,11 @@ class CommentController {
         .populate("user", "firstName lastName email")
         .populate("product", "name");
 
-          const response = { success: true, count: comments.length, data: comments };
+      const response = { success: true, count: comments.length, data: comments };
 
       // Cache result
       await redisClient.set(cacheKey, JSON.stringify(response));
-      res
-        .status(200)
-        .json(response);
+      res.status(200).json(response);
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
