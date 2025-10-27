@@ -98,10 +98,10 @@ app.use('/api/categories', rateLimiter(5, 30), categoryRoutes);
 app.use('/api/products', rateLimiter(5, 40), productRoutes);
 app.use('/api/profiles', rateLimiter(5, 10), profileRoutes);
 app.use('/api/request', rateLimiter(5, 10), requestRoutes);
-app.use('/api/carts', rateLimiter(5, 40), cartRoutes);
-app.use('/api/coupons', rateLimiter(5, 40), couponRoutes);
-app.use('/api/orders', rateLimiter(5, 20), orderRoutes);
-app.use('/api/limits', rateLimiter(1, 2), limitRoutes);
+app.use('/api/v2/carts', rateLimiter(5, 40), cartRoutes);
+app.use('/api/v2/coupons', rateLimiter(5, 40), couponRoutes);
+app.use('/api/v2/orders', rateLimiter(5, 20), orderRoutes);
+app.use('/api/v2/limits', rateLimiter(1, 2), limitRoutes);
 app.use('/api/comment',rateLimiter(1, 5), commentRoutes);
 
 

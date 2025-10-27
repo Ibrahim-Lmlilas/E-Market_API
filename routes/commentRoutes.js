@@ -5,7 +5,7 @@ const { protect, adminOnly } = require('../middlewares/auth');
 const { isSeller } = require('../middlewares/roleMiddleware');
 const validator = require('../middlewares/validationMiddleware');
 const { CommentSchema } = require('../utils/validationSchema');
-const { cache } = require('../middlewares/cachingMiddleware');
+const { cache } = require('../middlewares/CachingMiddleware');
 /**
  * @swagger
  * /api/comment:
