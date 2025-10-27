@@ -13,7 +13,6 @@
     "setup-products": "node scripts/createProducts.js",
     "setup-all": "npm run setup-roles && npm run setup-users && npm run setup-categories && npm run setup-products",
     "clear-setup": "npm run clear-db && npm run setup-roles && npm run setup-users && npm run setup-categories && npm run setup-products",
-    "test": "echo \"Error: no test specified\" && exit 1"
     "test": "mocha",
     "test:watch": "mocha --watch",
     "test:coverage": "nyc mocha"

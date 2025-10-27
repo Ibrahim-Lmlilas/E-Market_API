@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Role = require('../models/Role');
 const jwt = require('jsonwebtoken');
+const blacklistedTokens = require('../utils/blacklist');
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -84,6 +85,8 @@ class AuthController {
       }
       
       const token = generateToken(user._id);
+
+      req.loggedOut = false;
       
       res.status(200).json({
         success: true,
@@ -110,7 +113,19 @@ class AuthController {
   
   async logout(req, res) {
     try {
-     
+
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader) {
+        return res.status(400).json({ message: 'No token provided' });
+      }
+
+      let token;
+      if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = authHeader.split(' ')[1];
+      }
+      blacklistedTokens.add(token);
+
       res.status(200).json({
         success: true,
         message: 'Logged out successfully. Please remove the token from client.'
@@ -123,7 +138,6 @@ class AuthController {
       });
     }
   }
-  
 }
 
 module.exports = new AuthController();
