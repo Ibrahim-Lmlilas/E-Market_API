@@ -1,5 +1,5 @@
 const Category = require('../models/Category');
-const { redisClient } = require('../server');
+const redisClient = require('../config/redisClient');
 const NotificationService = require('../services/NotificationService');
 class CategoryController {
 
