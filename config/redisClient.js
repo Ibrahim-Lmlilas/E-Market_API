@@ -23,4 +23,4 @@ module.exports = redisClient;
 // apres ecrire
 //keys *
 //pour voir contenu ecrire
-//get (key li tl3 lik f terminal)
+//get (key li tl3 lik f terminal) 
