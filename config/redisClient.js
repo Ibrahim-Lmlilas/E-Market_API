@@ -16,3 +16,11 @@ redisClient.on('error', (err) => console.error('❌ Redis Error:', err));
 })();
 
 module.exports = redisClient;
+
+
+//pour voir data caching ecrire dans terminal
+//redis-cli
+// apres ecrire
+//keys *
+//pour voir contenu ecrire
+//get (key li tl3 lik f terminal)
