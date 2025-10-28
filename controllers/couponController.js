@@ -1,8 +1,13 @@
-const CouponService = require("../services/CouponService");
+const CouponService = require("../services/couponService");
+const Coupon = require("../models/Coupon");
 
 class CouponController {
     async createCoupon(req, res) {
         const { code, type, discount, expirationDate, category_id, user_id, usesLeft } = req.body;
+
+        if (type !== "fixed" && type !== "percentage") {
+            return res.status(400).json({ success: false, message: "Invalid discount type, must be either 'fixed' or 'percentage'" });
+        }
 
         if (type == "percentage" && discount > 100) {
             return res.status(400).json({ success: false, message: "Invalid discount value, must be below 100%" });
@@ -17,6 +22,7 @@ class CouponController {
     }
 
     async getAllCoupons(req, res) {
+
         try {
             const page = parseInt(req.query.page) || 1;
             const limit = 10;

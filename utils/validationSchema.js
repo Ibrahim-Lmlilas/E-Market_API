@@ -139,7 +139,15 @@ const UpdateCartItemSchema = yup.object({
     quantity: yup.number("quantity must be a number").required('Quantity is required'),
 });
 
-
+const couponSchema = yup.object({
+    code: yup.string().required('Coupon code is required'),
+    type: yup.string().required('Coupon type is required'),
+    discount: yup.number().required('Discount value is required'),
+    expirationDate: yup.date().required('Expiration date is required'),
+    category_id: yup.string().required('Category is required'),
+    user_id: yup.string().required('User is required'),
+    usesLeft: yup.number().required('Maximum Uses is required'),
+})
 
 module.exports = {
     userSchema, 
@@ -152,5 +160,6 @@ module.exports = {
     updateprofile,
     CartItemSchema,
     UpdateCartItemSchema,
-    passwordSchema 
+    passwordSchema,
+    couponSchema
 };
