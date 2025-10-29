@@ -2,6 +2,7 @@ const CartService = require('../services/CartService');
 const CartItemService = require('../services/CartItemService');
 const Product = require('../models/Product');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 const NotificationService = require('../services/NotificationService');
 
 class CartController {
