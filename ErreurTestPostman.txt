@@ -1,0 +1,4 @@
+logout:mkyms7ch token
+registre+login khdamin
+category khdami
+router.get('/v2', protect, adminOnly, requestController.getAllRequests);  fach kydir admin reject wla accept role kytbdl wlkn request kyb9a

@@ -10,5 +10,7 @@ const apiLimiter  = (minutes, max) => rateLimit({
   standardHeaders: true,
   legacyHeaders: false, 
 });
-
 module.exports = apiLimiter;
+
+// 120 000ms / 1000 = 120s / 60 = 2min
+//x minutes*60secondes*1000ms

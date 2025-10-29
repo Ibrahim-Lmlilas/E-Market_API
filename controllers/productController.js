@@ -2,6 +2,8 @@ const Product = require("../models/Product");
 const Category = require("../models/Category");
 const { redisClient } = require('../server');
 const mongoose = require("mongoose");
+const NotificationService = require('../services/NotificationService');
+const User = require('../models/User');
 
 class ProductController {
   // Public endpoint - Only published & visible products with pagination
@@ -258,10 +260,20 @@ class ProductController {
       await product.populate("category", "title slug");
       await product.populate("seller", "firstName lastName email");
 
-       // 🧠 Clear old cache (important!)
+      // 🧠 Clear old cache (important!)
       await redisClient.del("products"); // Clear all products cache
       await redisClient.del(`category_${category}`); // Optional: clear cache for this category
 
+      // Récupérer les admins
+      const admins = await User.find({ 'role.name': { $regex: /^admin$/i } });
+
+      // Ajouter une notification pour chaque admin
+      for (const admin of admins) {
+        await NotificationService.addNotification(
+          admin._id,
+          `The seller "${req.user.firstName} ${req.user.lastName}" has created a new product: "${title}".`
+        );
+      }
 
       res.status(201).json({
         success: true,

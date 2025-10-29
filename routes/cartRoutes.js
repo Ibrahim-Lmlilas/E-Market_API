@@ -4,6 +4,7 @@ const { protect } = require('../middlewares/auth');
 const cartController = require('../controllers/CartController');
 const validator = require('../middlewares/validationMiddleware');
 const { CartItemSchema, UpdateCartItemSchema } = require('../utils/validationSchema');
+const { cartSchema } = require('../models/cart');
 
 
 //cart routes
