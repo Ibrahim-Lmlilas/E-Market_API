@@ -24,4 +24,3 @@ router.delete('/user/:cartId/items/:cartItemId', protect, cartController.deleteC
 
 
 module.exports = router;
-
