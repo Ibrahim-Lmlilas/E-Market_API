@@ -52,7 +52,7 @@ exports.createRequest = async (req, res) => {
 // Admin views all requests
 exports.getAllRequests = async (req, res) => {
   try {
-    const requests = await Request.find({status: 'PENDING'})
+    const requests = await Request.find({ status: 'PENDING' })
       .populate('user', 'firstName lastName email role')
       .populate('currentRole', 'name')
       .populate('requestedRole', 'name')
