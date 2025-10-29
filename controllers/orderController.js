@@ -86,6 +86,13 @@ class OrderController {
     async getOrderById(req, res) {
         const { id } = req.params;
 
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid order ID is required",
+            });
+        }
+
         try {
             const order = await OrderService.getOrderById(id);
 
@@ -107,6 +114,13 @@ class OrderController {
     async updateOrderStatus(req, res) {
         const { id } = req.params;
         const { status } = req.body;
+
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid order ID is required",
+            });
+        }
 
         try {
             const updatedOrder = await OrderService.updateOrderStatus(id, status);
@@ -133,6 +147,13 @@ class OrderController {
         const { id } = req.params;
         const userId = req.user?.id;
 
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid order ID is required",
+            });
+        }
+
         try {
             const cancelledOrder = await OrderService.cancelOrder(userId, id);
 
@@ -156,6 +177,13 @@ class OrderController {
     // Delete order (admin)
     async deleteOrder(req, res) {
         const { id } = req.params;
+
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid order ID is required",
+            });
+        }
 
         try {
             const deleted = await OrderService.deleteOrder(id);

@@ -70,6 +70,14 @@ class CouponController {
 
     async getCouponById(req, res) {
         const { id } = req.params;
+
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid coupon ID is required",
+            });
+        }
+
         try {
             const coupon = await CouponService.getCouponById(id);
             if (!coupon) {
@@ -84,6 +92,14 @@ class CouponController {
     async updateCoupon(req, res) {
         const { id } = req.params;
         const data = req.body;
+
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid coupon ID is required",
+            });
+        }
+
         try {
             const updatedCoupon = await CouponService.updateCoupon(id, data);
             res.status(200).json({ success: true, message: "Coupon updated successfully", data: updatedCoupon });
@@ -94,6 +110,14 @@ class CouponController {
 
     async deleteCoupon(req, res) {
         const { id } = req.params;
+
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid coupon ID is required",
+            });
+        }
+
         try {
             const deletedCoupon = await CouponService.deleteCoupon(id);
             res.status(200).json({ success: true, message: "Coupon deleted successfully", data: deletedCoupon });

@@ -40,7 +40,7 @@ class ProductController {
 
       const total = await Product.countDocuments(filters);
 
-       const responseData = {
+      const responseData = {
         success: true,
         count: products.length,
         total,
@@ -176,31 +176,31 @@ class ProductController {
         .populate("category", "title slug")
         .populate("seller", "firstName lastName email");
 
-    //   if (!product || product.isDeleted) {
-    //     return res.status(404).json({
-    //       success: false,
-    //       message: "Product not found",
-    //     });
-    //   }
+      //   if (!product || product.isDeleted) {
+      //     return res.status(404).json({
+      //       success: false,
+      //       message: "Product not found",
+      //     });
+      //   }
 
       // Check if product is visible to public
-    //   if (product.status !== "published" || !product.isVisible) {
-    //     return res.status(404).json({
-    //       success: false,
-    //       message: "Product not found",
-    //     });
-    //   }
+      //   if (product.status !== "published" || !product.isVisible) {
+      //     return res.status(404).json({
+      //       success: false,
+      //       message: "Product not found",
+      //     });
+      //   }
 
-    if (!product || product.isDeleted || product.status !== 'published' || !product.isVisible) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
+      if (!product || product.isDeleted || product.status !== 'published' || !product.isVisible) {
+        return res.status(404).json({ success: false, message: 'Product not found' });
+      }
 
-        const responseData = { success: true, data: product };
-    
-    // 🟢 Store in Redis
-    await redisClient.set(`product_${req.params.id}`, JSON.stringify(responseData));
+      const responseData = { success: true, data: product };
 
-      res.status(200).json({responseData});
+      // 🟢 Store in Redis
+      await redisClient.set(`product_${req.params.id}`, JSON.stringify(responseData));
+
+      res.status(200).json({ responseData });
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -290,9 +290,14 @@ class ProductController {
 
   async updateProduct(req, res) {
     try {
-      const { title, description, price, stock, category, status, isVisible } =
-        req.body;
+      const { title, description, price, stock, category, status, isVisible } = req.body;
 
+      if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({
+          success: false,
+          message: "A valid product ID is required",
+        });
+      }
       // Find existing product
       const existingProduct = await Product.findById(req.params.id);
       if (!existingProduct || existingProduct.isDeleted) {
@@ -358,7 +363,7 @@ class ProductController {
         .populate("category", "title slug")
         .populate("seller", "firstName lastName email");
 
-        
+
       // 🧠 Clear outdated cache
       await redisClient.del("products"); // remove cached list of all products
       await redisClient.del(`product_${req.params.id}`); // remove cached single product
@@ -401,7 +406,7 @@ class ProductController {
       product.deletedAt = new Date();
       await product.save();
 
-         //  Clear outdated cache
+      //  Clear outdated cache
       await redisClient.del("products"); // remove cached list of all products
       await redisClient.del(`product_${req.params.id}`); // remove cached single product
 
@@ -421,83 +426,83 @@ class ProductController {
     }
   }
 
-//   async searchProduct(req, res) {
-//     const { column, value } = req.query;
+  //   async searchProduct(req, res) {
+  //     const { column, value } = req.query;
 
-//     if (column == "category") {
-//       const category = await Category.findOne({ slug: value });
-//       value = category._id;
-//     }
+  //     if (column == "category") {
+  //       const category = await Category.findOne({ slug: value });
+  //       value = category._id;
+  //     }
 
-//     try {
-//       const product = await Product.findOne({ [column]: value });
+  //     try {
+  //       const product = await Product.findOne({ [column]: value });
 
-//       if (!product || product.isDeleted) {
-//         return res.status(404).json({
-//           success: false,
-//           message: "Product not found",
-//         });
-//       }
-//       res.status(200).json({
-//         success: true,
-//         data: product,
-//       });
-//     } catch (error) {
-//       res.status(500).json({
-//         success: false,
-//         message: error.message,
-//       });
-//     }
-//   }
+  //       if (!product || product.isDeleted) {
+  //         return res.status(404).json({
+  //           success: false,
+  //           message: "Product not found",
+  //         });
+  //       }
+  //       res.status(200).json({
+  //         success: true,
+  //         data: product,
+  //       });
+  //     } catch (error) {
+  //       res.status(500).json({
+  //         success: false,
+  //         message: error.message,
+  //       });
+  //     }
+  //   }
 
-async searchProduct(req, res) {
-  let { column, value } = req.query;
+  async searchProduct(req, res) {
+    let { column, value } = req.query;
 
-  try {
-    if (column === "category") {
-      const category = await Category.findOne({ slug: value });
-      if (!category) {
+    try {
+      if (column === "category") {
+        const category = await Category.findOne({ slug: value });
+        if (!category) {
+          return res.status(404).json({
+            success: false,
+            message: "Category not found",
+          });
+        }
+        value = category._id;
+      }
+
+      // cache key
+      const cacheKey = `search_${column}_${value}`;
+
+      const cachedData = await redisClient.get(cacheKey);
+      if (cachedData) {
+        return res.status(200).json(JSON.parse(cachedData));
+      }
+
+      const product = await Product.findOne({ [column]: value });
+
+      if (!product || product.isDeleted) {
         return res.status(404).json({
           success: false,
-          message: "Category not found",
+          message: "Product not found",
         });
       }
-      value = category._id;
-    }
 
-    // cache key
-    const cacheKey = `search_${column}_${value}`;
+      const response = {
+        success: true,
+        data: product,
+      };
 
-    const cachedData = await redisClient.get(cacheKey);
-    if (cachedData) {
-      return res.status(200).json(JSON.parse(cachedData));
-    }
 
-    const product = await Product.findOne({ [column]: value });
+      await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
 
-    if (!product || product.isDeleted) {
-      return res.status(404).json({
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({
         success: false,
-        message: "Product not found",
+        message: error.message,
       });
     }
-
-    const response = {
-      success: true,
-      data: product,
-    };
-
-   
-    await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
-
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
   }
-}
 
 }
 

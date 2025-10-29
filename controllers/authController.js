@@ -10,11 +10,11 @@ const generateToken = (userId) => {
 };
 
 class AuthController {
-  
+
   async register(req, res) {
     try {
       const { firstName, lastName, email, password } = req.body;
-      
+
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(400).json({
@@ -22,12 +22,12 @@ class AuthController {
           message: 'Email already exists'
         });
       }
-      
+
       const userCount = await User.countDocuments();
       const roleName = userCount === 0 ? 'ADMIN' : 'USER';
-      
+
       const userRole = await Role.findByName(roleName);
-      
+
       const user = new User({
         firstName,
         lastName,
@@ -35,11 +35,11 @@ class AuthController {
         password,
         role: userRole._id
       });
-      
+
       await user.save();
-      
+
       const token = generateToken(user._id);
-      
+
       res.status(201).json({
         success: true,
         message: `User registered as ${roleName}`,
@@ -53,7 +53,7 @@ class AuthController {
           role: roleName
         }
       });
-      
+
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -65,29 +65,29 @@ class AuthController {
   async login(req, res) {
     try {
       const { email, password } = req.body;
-      
+
       const user = await User.findOne({ email }).populate('role', 'name');
-      
+
       if (!user) {
         return res.status(401).json({
           success: false,
           message: 'Invalid credentials'
         });
       }
-      
+
       const isPasswordCorrect = await user.comparePassword(password);
-      
+
       if (!isPasswordCorrect) {
         return res.status(401).json({
           success: false,
           message: 'Invalid credentials'
         });
       }
-      
+
       const token = generateToken(user._id);
 
       req.loggedOut = false;
-      
+
       res.status(200).json({
         success: true,
         message: 'Login successful',
@@ -101,7 +101,7 @@ class AuthController {
           role: user.role.name
         }
       });
-      
+
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -110,7 +110,7 @@ class AuthController {
     }
   }
 
-  
+
   async logout(req, res) {
     try {
 
@@ -130,7 +130,7 @@ class AuthController {
         success: true,
         message: 'Logged out successfully. Please remove the token from client.'
       });
-      
+
     } catch (error) {
       res.status(500).json({
         success: false,

@@ -64,6 +64,14 @@ class CommentController {
 
   //  Get all comments for a product
   async getCommentsByProduct(req, res) {
+
+    if (!req.params.productId || !mongoose.Types.ObjectId.isValid(req.params.productId)) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid product ID is required",
+      });
+    }
+
     try {
       const cacheKey = `comments_product_${req.params.productId}`;
       const cached = await redisClient.get(cacheKey);
@@ -89,6 +97,14 @@ class CommentController {
 
   //  Update user comment
   async updateComment(req, res) {
+
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid comment ID is required",
+      });
+    }
+
     try {
       const comment = await Comment.findById(req.params.id);
 
@@ -125,6 +141,14 @@ class CommentController {
 
   //  Delete comment (User or Admin)
   async deleteComment(req, res) {
+
+    if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid comment ID is required",
+      });
+    }
+
     try {
       const comment = await Comment.findById(req.params.id);
 
@@ -191,7 +215,7 @@ class CommentController {
   async getAllComments(req, res) {
     try {
 
-        const cacheKey = 'comments_all';
+      const cacheKey = 'comments_all';
       const cached = await redisClient.get(cacheKey);
       if (cached) {
         return res.status(200).json(JSON.parse(cached));
@@ -200,7 +224,7 @@ class CommentController {
       const comments = await Comment.find()
         .populate("user", "firstName lastName email")
         .populate("product", "name");
-        
+
       const response = { success: true, count: comments.length, data: comments };
 
       // Cache result
