@@ -1,5 +1,6 @@
 const CartService = require('../services/CartService');
 const CartItemService = require('../services/CartItemService');
+const CartItem = require('../models/cartItem');
 const Product = require('../models/Product');
 const User = require('../models/User');
 const mongoose = require('mongoose');
