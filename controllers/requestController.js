@@ -52,7 +52,7 @@ exports.createRequest = async (req, res) => {
 // Admin views all requests
 exports.getAllRequests = async (req, res) => {
   try {
-    const requests = await Request.find()
+    const requests = await Request.find({status: 'PENDING'})
       .populate('user', 'firstName lastName email role')
       .populate('currentRole', 'name')
       .populate('requestedRole', 'name')
@@ -71,6 +71,7 @@ exports.approveRequest = async (req, res) => {
     if (!request) return res.status(404).json({ success: false, message: 'Request not found' });
 
     await request.approve(req.user);
+    await request.remove(req.params.id);
 
     // Notify the user about the approval
     await NotificationService.addNotification(
@@ -91,6 +92,7 @@ exports.rejectRequest = async (req, res) => {
     if (!request) return res.status(404).json({ success: false, message: 'Request not found' });
 
     await request.reject(req.user);
+    await request.remove(req.params.id);
 
     // Notify the user about the rejection
     await NotificationService.addNotification(

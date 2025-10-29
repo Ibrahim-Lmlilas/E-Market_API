@@ -102,5 +102,9 @@ requestSchema.statics.directChangeRole = async function(userId, newRoleId, admin
   return user;
 };
 
+requestSchema.statics.remove = async function(id) {
+  return this.deleteOne({ _id: id });
+};
+
 const Request = mongoose.model('Request', requestSchema);
 module.exports = Request;

@@ -54,7 +54,7 @@ class CouponService {
 			coupon.type = data.type;
 			coupon.discount = data.discount;
 		}
-		if (data.discount) {
+		if (data.discount) {	
 			coupon.discount = data.discount;
 		}
 		if (data.code) {

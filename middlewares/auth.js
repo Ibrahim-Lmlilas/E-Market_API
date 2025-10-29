@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const blacklistedTokens = require('../utils/blacklist');
 
 const protect = async (req, res, next) => {
   try {
@@ -15,6 +16,14 @@ const protect = async (req, res, next) => {
         message: 'Not authorized, no token provided'
       });
     }
+
+    if (blacklistedTokens.has(token)) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized, expired token provided'
+      });
+    }
+
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
