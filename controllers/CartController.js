@@ -25,6 +25,14 @@ class CartController {
     }
 
     async getCartByUserId(req, res) {
+
+        if (!req.params.userId || !mongoose.Types.ObjectId.isValid(req.params.userId)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid user ID is required",
+            });
+        }
+
         const { userId } = req.params;
         try {
             const cart = await CartService.getCartByUserId(userId);
@@ -52,6 +60,14 @@ class CartController {
     }
 
     async clearCart(req, res) {
+
+        if (!req.params.cartId || !mongoose.Types.ObjectId.isValid(req.params.cartId)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid cart ID is required",
+            });
+        }
+
         const { cartId } = req.params;
 
         try {
@@ -65,6 +81,14 @@ class CartController {
 
 
     async getCartItemsByCartId(req, res) {
+
+        if (!req.params.cartId || !mongoose.Types.ObjectId.isValid(req.params.cartId)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid cart ID is required",
+            });
+        }
+
         try {
             const { cartId } = req.params;
             const page = parseInt(req.query.page) || 1;
@@ -197,6 +221,14 @@ class CartController {
     }
 
     async deleteCartItem(req, res) {
+
+        if (!req.params.cartItemId || !mongoose.Types.ObjectId.isValid(req.params.cartItemId)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid cart item ID is required",
+            });
+        }
+
         const { cartItemId } = req.params;
         try {
             const cartItem = await CartItemService.deleteCartItem(cartItemId);
