@@ -9,12 +9,12 @@ class CartService {
     }
 
     async getCartByUserId(userId) {
-        const cart = await Cart.findOne({ user_id: userId });
+        const cart = await Cart.findOne({ user_id: userId, isDeleted: false });
         return cart;
     }
 
     async applyCoupon(code, cartId) {
-        const cart = await Cart.findOne({ _id: cartId });
+        const cart = await Cart.findOne({ _id: cartId, isDeleted: false });
         if (cart) {
             
             if (cart.coupon) {
@@ -38,7 +38,7 @@ class CartService {
     }
 
     async cartNotOrder(cartId) {
-        const cart = await Cart.findOne({ _id: cartId, type: 'Cart' });
+        const cart = await Cart.findOne({ _id: cartId, type: 'Cart', isDeleted: false });
         if(!cart){
             return false;
         }
