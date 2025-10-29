@@ -110,7 +110,7 @@ class AuthController {
   
   async logout(req, res) {
     try {
-     
+      
       res.status(200).json({
         success: true,
         message: 'Logged out successfully. Please remove the token from client.'

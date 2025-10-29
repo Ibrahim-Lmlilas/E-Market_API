@@ -51,21 +51,21 @@ app.get('/fouad', (req, res) => {
 
 
 //----------------------redis---------------------------
-const redis = require('redis');
+// const redis = require('redis');
 
-const redisClient = redis.createClient();
+// const redisClient = redis.createClient();
 
-redisClient.on('error', (err) => console.error('Redis error:', err));
+// redisClient.on('error', (err) => console.error('Redis error:', err));
 
 
-const connectRedis = async () => {
-  try {
-    await redisClient.connect();
-    console.log('✅ Connected to Redis');
-  } catch (err) {
-    console.error('❌ Redis connection error:', err);
-  }
-};
+// const connectRedis = async () => {
+//   try {
+//     await redisClient.connect();
+//     console.log(' Connected to Redis');
+//   } catch (err) {
+//     console.error(' Redis connection error:', err);
+//   }
+// };
 
 // ---------------------Routes--------------------------
 app.get('/', (req, res) => {
@@ -98,10 +98,10 @@ app.use('/api/categories', rateLimiter(5, 30), categoryRoutes);
 app.use('/api/products', rateLimiter(5, 40), productRoutes);
 app.use('/api/profiles', rateLimiter(5, 10), profileRoutes);
 app.use('/api/request', rateLimiter(5, 10), requestRoutes);
-app.use('/api/carts', rateLimiter(5, 40), cartRoutes);
-app.use('/api/coupons', rateLimiter(5, 40), couponRoutes);
-app.use('/api/orders', rateLimiter(5, 20), orderRoutes);
-app.use('/api/limits', rateLimiter(1, 2), limitRoutes);
+app.use('/api/v2/carts', rateLimiter(5, 40), cartRoutes);
+app.use('/api/v2/coupons', rateLimiter(5, 40), couponRoutes);
+app.use('/api/v2/orders', rateLimiter(5, 20), orderRoutes);
+app.use('/api/v2/limits', rateLimiter(1, 2), limitRoutes);
 app.use('/api/comment',rateLimiter(1, 5), commentRoutes);
 
 
@@ -139,7 +139,7 @@ const connectDB = async () => {
 };
 
 const startServer = async () => {
-    await connectRedis(); 
+    
   await connectDB();
   
   app.listen(PORT, () => {
@@ -150,4 +150,4 @@ const startServer = async () => {
 
 startServer();
 
-module.exports =  { app, redisClient };;
+module.exports =  app;;
