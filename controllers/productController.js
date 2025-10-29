@@ -1,6 +1,7 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
 const { redisClient } = require('../server');
+const mongoose = require("mongoose");
 
 class ProductController {
   // Public endpoint - Only published & visible products with pagination
@@ -161,6 +162,14 @@ class ProductController {
 
   async getProductById(req, res) {
     try {
+
+      if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({
+          success: false,
+          message: "A valid product ID is required",
+        });
+      }
+
       const product = await Product.findById(req.params.id)
         .populate("category", "title slug")
         .populate("seller", "firstName lastName email");
