@@ -4,7 +4,7 @@ const CartItem = require('../models/cartItem');
 const Product = require('../models/Product');
 const NotificationService = require('../services/NotificationService');
 const mongoose = require('mongoose');
-const CartItem = require('../models/cartItem');
+
 
 class CartController {
   async createCart(req, res) {
