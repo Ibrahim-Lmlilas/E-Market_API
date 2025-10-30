@@ -1,4 +1,4 @@
-const CouponService = require('../services/CouponService');
+const CouponService = require('../services/couponService');
 const Coupon = require('../models/Coupon');
 const NotificationService = require('../services/NotificationService');
 const mongoose = require('mongoose');
