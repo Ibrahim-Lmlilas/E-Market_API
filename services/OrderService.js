@@ -43,9 +43,9 @@ class OrderService {
 		cart.coupon = couponCodeString || null;
 		cart.price = total - discountApplied;
 
-		// await cart.save();
+		await cart.save();
 
-		// await CartService.createCart(cart.user_id);
+		await CartService.createCart(cart.user_id);
 
 		return order;
 	}
@@ -67,16 +67,11 @@ class OrderService {
 	}
 
 	async calculateTotalWithCoupons(cart, couponsCodes) {
-
-		// console.log("cart : ",cart);
 		
 		const cartItems = await CartItem.find({ cart_id: cart._id }).populate({
 			path: 'product_id',
 			select: 'price stock category',
-		});
-
-		// console.log("cart items : ",cartItems);
-		
+		});		
 		
 		if (!cartItems.length) return { total: 0, discountApplied: 0, couponCodes: [] };
 
@@ -89,24 +84,14 @@ class OrderService {
 			
 			const coupon = await Coupon.findOne({ code: code.trim(), isDeleted: false });
 			
-			console.log("coupon : ",coupon);
-			// if (!coupon) continue;
+			if (!coupon) continue;
 
 			appliedCoupons.push(coupon.code);			
 
 			// Apply coupon to eligible items
 			for (const item of cartItems) {
 
-				console.log("item.product_id.category : ",item.product_id.category);
-				
-				console.log("coupon.category_id : ",coupon.category_id);
-
-				// console.log("coupon",coupon);
-				
-
 				if (item.product_id.category && item.product_id.category.toString() === coupon.category_id.toString()) {
-
-					console.log("here");
 
 					let originalPrice = item.product_id.price;
 
