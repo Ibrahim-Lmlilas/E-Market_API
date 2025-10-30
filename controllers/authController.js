@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Role = require('../models/Role');
 const jwt = require('jsonwebtoken');
 const blacklistedTokens = require('../utils/blacklist');
+const CartService = require('../services/CartService');
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -36,6 +37,8 @@ class AuthController {
       });
 
       await user.save();
+
+      await CartService.createCart(user._id);
 
       const token = generateToken(user._id);
 
