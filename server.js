@@ -1,3 +1,4 @@
+const compression = require('compression');
 const express = require('express');
 const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
