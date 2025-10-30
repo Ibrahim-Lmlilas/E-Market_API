@@ -1,6 +1,6 @@
 const Comment = require('../models/Comment');
 const Product = require('../models/Product');
-const { redisClient } = require('../server');
+const redisClient = require('../config/redisClient');
 const NotificationService = require('../services/NotificationService');
 const mongoose = require('mongoose');
 
