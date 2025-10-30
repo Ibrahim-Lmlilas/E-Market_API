@@ -482,10 +482,10 @@ class ProductController {
       // cache key
       const cacheKey = `search_${column}_${value}`;
 
-      const cachedData = await redisClient.get(cacheKey);
-      if (cachedData) {
-        return res.status(200).json(JSON.parse(cachedData));
-      }
+      // const cachedData = await redisClient.get(cacheKey);
+      // if (cachedData) {
+      //   return res.status(200).json(JSON.parse(cachedData));
+      // }
 
       const product = await Product.findOne({ [column]: value });
 
@@ -501,7 +501,7 @@ class ProductController {
         data: product,
       };
 
-      await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
+      // await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
 
       res.status(200).json(response);
     } catch (error) {

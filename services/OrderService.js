@@ -5,169 +5,192 @@ const Order = require('../models/Order');
 const CartService = require('./CartService');
 
 class OrderService {
-  async validateOrder(cartId) {
-    const cart = await Cart.findById(cartId).populate({
-      path: 'user_id',
-      select: '_id',
-    });
+	async validateOrder(cartId, couponCodes) {
+		const cart = await Cart.findById(cartId).populate({
+			path: 'user_id',
+			select: '_id',
+		});
 
-    if (!cart || cart.type !== 'Cart') {
-      throw new Error('Invalid or already validated cart');
-    }
+		if (!cart || cart.type !== 'Cart') {
+			throw new Error('Invalid or already validated cart');
+		}
 
-    const cartItems = await CartItem.find({ cart_id: cartId }).populate({
-      path: 'product_id',
-      select: 'price stock category_id',
-    });
+		const cartItems = await CartItem.find({ cart_id: cartId }).populate({
+			path: 'product_id',
+			select: 'price stock category',
+		});
 
-    if (!cartItems.length) {
-      throw new Error('Cart is empty');
-    }
+		if (!cartItems.length) {
+			throw new Error('Cart is empty');
+		}
 
-    await this.verifyStockAvailability(cartItems);
+		await this.verifyStockAvailability(cartItems);
 
-    const { total, discountApplied, couponCode } =
-      await this.calculateTotalWithCoupon(cart);
+		const { total, discountApplied, couponCodeString} = await this.calculateTotalWithCoupons(cart, couponCodes);
 
-    await this.updateProductStock(cartItems);
+		await this.updateProductStock(cartItems);
 
-    const order = await Order.create({
-      user_id: cart.user_id,
-      cart_id: cart._id,
-      totalPrice: total - discountApplied,
-      discountApplied,
-      couponCode,
-      status: 'Pending',
-    });
+		const order = await Order.create({
+			user_id: cart.user_id,
+			cart_id: cart._id,
+			totalPrice: total - discountApplied,
+			discountApplied,
+			couponCode: couponCodeString || null,
+			status: 'Pending',
+		});
 
-    cart.type = 'Order';
-    await cart.save();
+		cart.type = 'Order';
+		cart.coupon = couponCodeString || null;
+		cart.price = total - discountApplied;
 
-    await CartService.createCart(cart.user_id);
+		// await cart.save();
 
-    return order;
-  }
+		// await CartService.createCart(cart.user_id);
 
-  async verifyStockAvailability(cartItems) {
-    for (const item of cartItems) {
-      if (item.quantity > item.product_id.stock) {
-        throw new Error(`Not enough stock for ${item.product_id.name}`);
-      }
-    }
-  }
+		return order;
+	}
 
-  async updateProductStock(cartItems) {
-    for (const item of cartItems) {
-      const product = item.product_id;
-      product.stock -= item.quantity;
-      await product.save();
-    }
-  }
+	async verifyStockAvailability(cartItems) {
+		for (const item of cartItems) {
+			if (item.quantity > item.product_id.stock) {
+				throw new Error(`Not enough stock for ${item.product_id.name}`);
+			}
+		}
+	}
 
-  async calculateTotalWithCoupon(cart) {
-    const cartItems = await CartItem.find({ cart_id: cart._id }).populate({
-      path: 'product_id',
-      select: 'price category_id',
-    });
+	async updateProductStock(cartItems) {
+		for (const item of cartItems) {
+			const product = item.product_id;
+			product.stock -= item.quantity;
+			await product.save();
+		}
+	}
 
-    let total = 0;
-    let discountApplied = 0;
-    let couponCode = null;
+	async calculateTotalWithCoupons(cart, couponsCodes) {
 
-    total = cartItems.reduce(
-      (sum, item) => sum + item.product_id.price * item.quantity,
-      0
-    );
+		// console.log("cart : ",cart);
+		
+		const cartItems = await CartItem.find({ cart_id: cart._id }).populate({
+			path: 'product_id',
+			select: 'price stock category',
+		});
 
-    if (cart.coupon) {
-      const coupon = await Coupon.findOne({
-        code: cart.coupon,
-        isDeleted: false,
-      });
+		// console.log("cart items : ",cartItems);
+		
+		
+		if (!cartItems.length) return { total: 0, discountApplied: 0, couponCodes: [] };
 
-      if (coupon) {
-        const eligibleItems = cartItems.filter(
-          (item) =>
-            item.product_id.category_id.toString() ===
-            coupon.category_id.toString()
-        );
+		let total = 0;
+		let discountApplied = 0;
+		let appliedCoupons = [];
 
-        const eligibleTotal = eligibleItems.reduce(
-          (sum, item) => sum + item.product_id.price * item.quantity,
-          0
-        );
+		for (const code of couponsCodes) {
 
-        if (eligibleTotal > 0) {
-          if (coupon.type === 'percentage') {
-            discountApplied = (eligibleTotal * coupon.discount) / 100;
-          } else if (coupon.type === 'fixed') {
-            discountApplied = Math.min(coupon.discount, eligibleTotal);
-          }
+			
+			const coupon = await Coupon.findOne({ code: code.trim(), isDeleted: false });
+			
+			console.log("coupon : ",coupon);
+			// if (!coupon) continue;
 
-          coupon.decrementUse();
-          couponCode = coupon.code;
-        }
-      }
-    }
+			appliedCoupons.push(coupon.code);			
 
-    return { total, discountApplied, couponCode };
-  }
+			// Apply coupon to eligible items
+			for (const item of cartItems) {
 
-  async getOrderById(orderId) {
-    return Order.findById(orderId).populate('user_id', 'name email');
-  }
+				console.log("item.product_id.category : ",item.product_id.category);
+				
+				console.log("coupon.category_id : ",coupon.category_id);
 
-  async deleteOrder(orderId) {
-    const order = await Order.findById(orderId);
-    if (!order) throw new Error('Order not found');
-    order.isDeleted = true;
-    order.deletedAt = new Date();
-    await order.save();
-    return order;
-  }
+				// console.log("coupon",coupon);
+				
 
-  async getUserOrders(userId) {
-    const Orders = await Order.find({
-      user_id: userId,
-      isDeleted: false,
-    }).populate('user_id', 'name email');
+				if (item.product_id.category && item.product_id.category.toString() === coupon.category_id.toString()) {
 
-    if (Orders.length === 0) {
-      return false;
-    }
+					console.log("here");
 
-    return Orders;
-  }
+					let originalPrice = item.product_id.price;
 
-  async updateOrderStatus(orderId, status) {
-    const order = await Order.findById(orderId);
+					let discountedPrice;
+					if (coupon.type === 'percentage') {
+						discountedPrice = originalPrice * (1 - coupon.discount / 100);
+					} else {
+						discountedPrice = Math.max(originalPrice - coupon.discount, 0);
+					}
 
-    if (!order) {
-      return false;
-    }
+					// Update the CartItem price
+					item.price = Math.round(discountedPrice); // optional rounding
+					await item.save();
 
-    order.status = status;
-    await order.save();
+					discountApplied += originalPrice - item.price;
 
-    return order;
-  }
+					// Decrement coupon usage
+					await coupon.decrementUse();
+				}
+			}
+		}
 
-  async cancelOrder(userId, orderId) {
-    const order = await Order.findById(orderId);
+		// Calculate total based on updated prices
+		total = cartItems.reduce((sum, item) => sum + item.price , 0);
 
-    if (!order) {
-      return false;
-    }
+		return { total, discountApplied, couponCodeString: appliedCoupons.join(',') };
+	}
 
-    if (order.user_id.toString() !== userId) {
-      return false;
-    }
 
-    order.status = 'Cancelled';
-    await order.save();
+	async getOrderById(orderId) {
+		return Order.findById(orderId).populate('user_id', 'name email');
+	}
 
-    return order;
-  }
+	async deleteOrder(orderId) {
+		const order = await Order.findById(orderId);
+		if (!order) throw new Error('Order not found');
+		order.isDeleted = true;
+		order.deletedAt = new Date();
+		await order.save();
+		return order;
+	}
+
+	async getUserOrders(userId) {
+		const Orders = await Order.find({
+			user_id: userId,
+			isDeleted: false,
+		}).populate('user_id', 'name email');
+
+		if (Orders.length === 0) {
+			return false;
+		}
+
+		return Orders;
+	}
+
+	async updateOrderStatus(orderId, status) {
+		const order = await Order.findById(orderId);
+
+		if (!order) {
+			return false;
+		}
+
+		order.status = status;
+		await order.save();
+
+		return order;
+	}
+
+	async cancelOrder(userId, orderId) {
+		const order = await Order.findById(orderId);
+
+		if (!order) {
+			return false;
+		}
+
+		if (order.user_id.toString() !== userId) {
+			return false;
+		}
+
+		order.status = 'Cancelled';
+		await order.save();
+
+		return order;
+	}
 }
 
 module.exports = new OrderService();

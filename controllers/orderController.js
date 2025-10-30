@@ -6,11 +6,11 @@ const mongoose = require('mongoose');
 class OrderController {
   // Create new order
   async createOrder(req, res) {
-    const { cartId, couponCode } = req.body;
+    const { cartId, couponCodes } = req.body;
     const userId = req.user?.id;
 
     try {
-      const order = await OrderService.validateOrder(cartId);
+      const order = await OrderService.validateOrder(cartId, couponCodes);
 
       // Notify the user
       await NotificationService.addNotification(
