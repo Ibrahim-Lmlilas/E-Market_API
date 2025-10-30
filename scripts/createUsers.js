@@ -6,7 +6,6 @@ require('dotenv').config();
 
 const createUsers = async () => {
   try {
-    const salt = await bcrypt.genSalt(10);
 
     await mongoose.connect(process.env.MONGODB_URI);
 

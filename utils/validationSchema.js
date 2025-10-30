@@ -159,6 +159,11 @@ const editCouponSchema = yup.object({
     usesLeft: yup.number(),
 });
 
+const orderSchema = yup.object({
+    cartId: yup.string().required('Cart ID is required'),
+    couponCode: yup.string(),
+});
+
 module.exports = {
     userSchema, 
     productSchema, 
@@ -172,5 +177,6 @@ module.exports = {
     UpdateCartItemSchema,
     passwordSchema,
     couponSchema,
-    editCouponSchema
+    editCouponSchema,
+    orderSchema
 };

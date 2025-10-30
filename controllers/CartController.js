@@ -1,9 +1,9 @@
 const CartService = require('../services/CartService');
 const CartItemService = require('../services/CartItemService');
 const Product = require('../models/Product');
-const User = require('../models/User');
-const mongoose = require('mongoose');
 const NotificationService = require('../services/NotificationService');
+const mongoose = require('mongoose');
+const CartItem = require('../models/cartItem');
 
 class CartController {
     async createCart(req, res) {
@@ -20,7 +20,7 @@ class CartController {
             await NotificationService.addNotification(userId, 'A new cart has been created for your account.');
 
             res.status(201).json({ success: true, message: 'Cart created successfully', data: cart });
-        } catch (error) {
+        } catch (_) {
             res.status(500).json({ success: false, message: 'error Creating Cart' });
         }
     }
@@ -41,7 +41,7 @@ class CartController {
                 return res.status(404).json({ success: false, message: 'Cart not found, make sure your User ID is valid' });
             }
             res.status(200).json({ success: true, data: cart });
-        } catch (error) {
+        } catch (_) {
             res.status(500).json({ success: false, message: 'error getting cart' });
         }
     }
@@ -55,7 +55,7 @@ class CartController {
                 return res.status(404).json({ success: false, message: 'Cart not found, make sure your User ID is valid' });
             }
             res.status(200).json({ success: true, data: cart });
-        } catch (error) {
+        } catch (_) {
             res.status(500).json({ success: false, message: 'error getting cart', user: userId });
         }
     }
@@ -74,7 +74,7 @@ class CartController {
         try {
             const cart = await CartItemService.clearCart(cartId);
             res.status(200).json({ success: true, message: 'Cart cleared successfully', data: cart });
-        } catch (error) {
+        } catch (_) {
             res.status(500).json({ success: false, message: 'error clearing cart' });
         }
     }
@@ -201,7 +201,7 @@ class CartController {
                 message: 'Cart item added/updated successfully',
                 data: cartItem
             });
-        } catch (error) {
+        } catch (_) {
             res.status(500).json({ success: false, message: 'Error adding/updating cart item' });
         }
     }
@@ -216,7 +216,7 @@ class CartController {
             } else {
                 res.status(404).json({ success: false, message: 'Cart item not found' });
             }
-        } catch (error) {
+        } catch (_) {
             res.status(500).json({ success: false, message: 'error updating cart item' });
         }
     }
@@ -238,7 +238,7 @@ class CartController {
             } else {
                 res.status(404).json({ success: false, message: 'Cart item not found' });
             }
-        } catch (error) {
+        } catch (_) {
             res.status(500).json({ success: false, message: 'error deleting cart item' });
         }
     }

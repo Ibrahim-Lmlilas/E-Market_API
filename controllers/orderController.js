@@ -1,5 +1,7 @@
 const OrderService = require('../services/OrderService');
 const NotificationService = require('../services/NotificationService');
+const Order = require('../models/Order');
+const mongoose = require("mongoose");
 
 class OrderController {
     // Create new order
@@ -8,7 +10,7 @@ class OrderController {
         const userId = req.user?.id;
 
         try {
-            const order = await OrderService.validateOrder(userId, cartId, couponCode);
+            const order = await OrderService.validateOrder(cartId);
 
             // Notify the user
             await NotificationService.addNotification(userId, 'Your order has been created successfully.');

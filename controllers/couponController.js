@@ -1,7 +1,7 @@
-const CouponService = require("../services/couponService");
+const CouponService = require("../services/CouponService");
 const Coupon = require("../models/Coupon");
 const NotificationService = require('../services/NotificationService');
-
+const mongoose = require("mongoose");
 
 class CouponController {
     async createCoupon(req, res) {

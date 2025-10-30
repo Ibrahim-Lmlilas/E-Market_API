@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Role = require('../models/Role');
+const mongoose = require('mongoose');
 
 class UserController {
 

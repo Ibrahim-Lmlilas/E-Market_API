@@ -300,9 +300,7 @@ productSchema.statics.findOnPromotion = function() {
     'promotion.isActive': true,
     $or: [
       { 'promotion.startDate': null },
-      { 'promotion.startDate': { $lte: now } }
-    ],
-    $or: [
+      { 'promotion.startDate': { $lte: now } },
       { 'promotion.endDate': null },
       { 'promotion.endDate': { $gte: now } }
     ],
