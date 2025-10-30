@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const morgan = require('morgan');
-require('dotenv').config();
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV || 'development'}`
+});
 const securityMiddleware = require('./middlewares/security');
 
 const logger = require('./utils/logger');

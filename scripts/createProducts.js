@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const createProducts = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(env.MONGODB_URI);
 
     await Product.deleteMany({});
 

@@ -30,7 +30,7 @@ const connectDB = async () => {
     });
   } catch (error) {
     console.error('❌ MongoDB connection failed:', error.message);
-    console.error('🔧 Please check your MONGODB_URI in .env file');
+    console.error('🔧 Please check your MONGODB_URI in .process.env file');
     process.exit(1);
   }
 };

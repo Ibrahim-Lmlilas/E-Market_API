@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const createUsers = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(env.MONGODB_URI);
 
     await User.deleteMany({});
 
