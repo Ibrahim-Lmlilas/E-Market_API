@@ -19,7 +19,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - mongo_data:/data/db
     restart: unless-stopped
 
   mongo-express:
@@ -34,11 +34,16 @@ services:
     restart: unless-stopped
 
   redis:
-    image: "redis:alpine"
+    image: redis:latest
+    container_name: my-redis-server
     ports:
-      - "6379:6379"
+      - "6380:6380"
+    volumes:
+      - redis_data:/data
     restart: unless-stopped
 
 volumes:
-  mongo-data:
+  redis_data:
+    name: e-market-redis-data
+  mongo_data:
     name: e-market-mongo-data

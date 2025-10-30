@@ -14,7 +14,7 @@ const { cache } = require('../middlewares/CachingMiddleware');
 
 /**
  * @swagger
- * /api/products:
+ * /api/products/v1:
  *   get:
  *     summary: Get all published products (Public) with pagination
  *     tags: [Products]
