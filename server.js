@@ -36,6 +36,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(ResponseHandler.logger);
 
+app.use(compression({ threshold: 0 }));
+
 // utilisation morgan avec winston
 app.use(
   morgan('combined', {
