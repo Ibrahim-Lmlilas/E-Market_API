@@ -9,9 +9,20 @@ router.get('/', protect, adminOnly, orderController.getAllOrders);
 
 router.get('/:id', protect, adminOnly, orderController.getOrderById);
 
-router.post('/', protect, validator.validate(orderSchema), orderController.createOrder);
+router.post(
+  '/',
+  protect,
+  validator.validate(orderSchema),
+  orderController.createOrder
+);
 
-router.put('/:id', protect, adminOnly, validator.validate(orderSchema), orderController.updateOrderStatus);
+router.put(
+  '/:id',
+  protect,
+  adminOnly,
+  validator.validate(orderSchema),
+  orderController.updateOrderStatus
+);
 
 router.delete('/:id', protect, adminOnly, orderController.deleteOrder);
 

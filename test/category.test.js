@@ -29,18 +29,16 @@ describe('Category Tests', function () {
       lastName: 'User',
       email: 'admin@test.com',
       password: 'password123',
-      role: testRole._id
+      role: testRole._id,
     });
     await testUser.save();
 
     // Login to get token
-    const loginRes = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'admin@test.com',
-        password: 'password123'
-      });
-    
+    const loginRes = await request(app).post('/api/auth/login').send({
+      email: 'admin@test.com',
+      password: 'password123',
+    });
+
     authToken = loginRes.body.token;
   });
 
@@ -65,8 +63,7 @@ describe('Category Tests', function () {
       await category1.save();
       await category2.save();
 
-      const res = await request(app)
-        .get('/api/categories');
+      const res = await request(app).get('/api/categories');
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
@@ -80,8 +77,7 @@ describe('Category Tests', function () {
     });
 
     it('should return empty array when no categories exist', async function () {
-      const res = await request(app)
-        .get('/api/categories');
+      const res = await request(app).get('/api/categories');
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
@@ -95,8 +91,7 @@ describe('Category Tests', function () {
       testCategory = new Category({ title: 'Test Category' });
       await testCategory.save();
 
-      const res = await request(app)
-        .get(`/api/categories/${testCategory._id}`);
+      const res = await request(app).get(`/api/categories/${testCategory._id}`);
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
@@ -106,16 +101,14 @@ describe('Category Tests', function () {
 
     it('should return 404 for non-existent category', async function () {
       const fakeId = '507f1f77bcf86cd799439011';
-      const res = await request(app)
-        .get(`/api/categories/${fakeId}`);
+      const res = await request(app).get(`/api/categories/${fakeId}`);
 
       expect(res.status).to.equal(404);
       expect(res.body).to.have.property('success', false);
     });
 
     it('should return 400 for invalid category ID format', async function () {
-      const res = await request(app)
-        .get('/api/categories/invalid-id');
+      const res = await request(app).get('/api/categories/invalid-id');
 
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('success', false);
@@ -125,7 +118,7 @@ describe('Category Tests', function () {
   describe('POST /api/categories', function () {
     it('should create a new category (admin only)', async function () {
       const categoryData = {
-        title: 'New Category'
+        title: 'New Category',
       };
 
       const res = await request(app)
@@ -144,12 +137,10 @@ describe('Category Tests', function () {
 
     it('should return 401 without authentication', async function () {
       const categoryData = {
-        title: 'New Category'
+        title: 'New Category',
       };
 
-      const res = await request(app)
-        .post('/api/categories')
-        .send(categoryData);
+      const res = await request(app).post('/api/categories').send(categoryData);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -189,7 +180,7 @@ describe('Category Tests', function () {
 
     it('should update a category (admin only)', async function () {
       const updateData = {
-        title: 'Updated Category'
+        title: 'Updated Category',
       };
 
       const res = await request(app)
@@ -209,7 +200,7 @@ describe('Category Tests', function () {
 
     it('should return 401 without authentication', async function () {
       const updateData = {
-        title: 'Updated Category'
+        title: 'Updated Category',
       };
 
       const res = await request(app)
@@ -223,7 +214,7 @@ describe('Category Tests', function () {
     it('should return 404 for non-existent category', async function () {
       const fakeId = '507f1f77bcf86cd799439011';
       const updateData = {
-        title: 'Updated Category'
+        title: 'Updated Category',
       };
 
       const res = await request(app)
@@ -257,8 +248,9 @@ describe('Category Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app)
-        .delete(`/api/categories/${testCategory._id}`);
+      const res = await request(app).delete(
+        `/api/categories/${testCategory._id}`
+      );
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);

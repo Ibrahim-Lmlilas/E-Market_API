@@ -2,15 +2,15 @@ const User = require('../models/User');
 const Role = require('../models/Role');
 const jwt = require('jsonwebtoken');
 const blacklistedTokens = require('../utils/blacklist');
+const CartService = require('../services/CartService');
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '7d'
+    expiresIn: process.env.JWT_EXPIRE || '7d',
   });
 };
 
 class AuthController {
-
   async register(req, res) {
     try {
       const { firstName, lastName, email, password } = req.body;
@@ -19,7 +19,7 @@ class AuthController {
       if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: 'Email already exists'
+          message: 'Email already exists',
         });
       }
 
@@ -33,10 +33,12 @@ class AuthController {
         lastName,
         email,
         password,
-        role: userRole._id
+        role: userRole._id,
       });
 
       await user.save();
+
+      await CartService.createCart(user._id);
 
       const token = generateToken(user._id);
 
@@ -50,14 +52,13 @@ class AuthController {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          role: roleName
-        }
+          role: roleName,
+        },
       });
-
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
   }
@@ -71,7 +72,7 @@ class AuthController {
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid credentials'
+          message: 'Invalid credentials',
         });
       }
 
@@ -80,7 +81,7 @@ class AuthController {
       if (!isPasswordCorrect) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid credentials'
+          message: 'Invalid credentials',
         });
       }
 
@@ -98,22 +99,19 @@ class AuthController {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          role: user.role.name
-        }
+          role: user.role.name,
+        },
       });
-
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
   }
 
-
   async logout(req, res) {
     try {
-
       const authHeader = req.headers.authorization;
 
       if (!authHeader) {
@@ -121,20 +119,23 @@ class AuthController {
       }
 
       let token;
-      if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      if (
+        req.headers.authorization &&
+        req.headers.authorization.startsWith('Bearer')
+      ) {
         token = authHeader.split(' ')[1];
       }
       blacklistedTokens.add(token);
 
       res.status(200).json({
         success: true,
-        message: 'Logged out successfully. Please remove the token from client.'
+        message:
+          'Logged out successfully. Please remove the token from client.',
       });
-
     } catch (error) {
       res.status(500).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
   }

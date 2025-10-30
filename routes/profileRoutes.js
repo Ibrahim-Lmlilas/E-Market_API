@@ -40,16 +40,20 @@ const { updateprofile, passwordSchema } = require('../utils/validationSchema');
  *       500:
  *         description: Server error.
  */
-router.put('/v2/edit', protect, validator.validate(updateprofile), async (req, res) => {
-  const controller = new profileController();
-  try {
-    await controller.editProfile(req, res);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
+router.put(
+  '/v2/edit',
+  protect,
+  validator.validate(updateprofile),
+  async (req, res) => {
+    const controller = new profileController();
+    try {
+      await controller.editProfile(req, res);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
   }
-});
-
+);
 
 /**
  * @swagger
@@ -83,16 +87,20 @@ router.put('/v2/edit', protect, validator.validate(updateprofile), async (req, r
  *       500:
  *         description: Server error.
  */
-router.put('/v2/change-password', protect, validator.validate(passwordSchema), async (req, res) => {
-  try {
-    const controller = new profileController();
-    await controller.changePassword(req, res);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
+router.put(
+  '/v2/change-password',
+  protect,
+  validator.validate(passwordSchema),
+  async (req, res) => {
+    try {
+      const controller = new profileController();
+      await controller.changePassword(req, res);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
   }
-});
-
+);
 
 /**
  * @swagger

@@ -20,21 +20,25 @@ test/
 ## 🚀 Exécution des Tests
 
 ### Installation des dépendances
+
 ```bash
 npm install
 ```
 
 ### Exécuter tous les tests
+
 ```bash
 npm test
 ```
 
 ### Exécuter les tests en mode watch
+
 ```bash
 npm run test:watch
 ```
 
 ### Exécuter un test spécifique
+
 ```bash
 npx mocha test/auth.test.js
 ```
@@ -88,16 +92,19 @@ npx mocha test/auth.test.js
 ## 🔧 Configuration des Tests
 
 ### Base de Données de Test
+
 - Utilise MongoDB Memory Server pour les tests
 - Base de données isolée pour chaque suite de tests
 - Nettoyage automatique après chaque test
 
 ### Authentification
+
 - Création automatique d'utilisateurs de test
 - Génération de tokens JWT pour les tests
 - Nettoyage des données après chaque test
 
 ### Variables d'Environnement
+
 Les tests utilisent des variables d'environnement de test automatiquement configurées.
 
 ## 📈 Statistiques des Tests
@@ -110,12 +117,14 @@ Les tests utilisent des variables d'environnement de test automatiquement config
 ## 🐛 Dépannage
 
 ### Erreur de connexion à la base de données
+
 ```bash
 # Vérifier que MongoDB Memory Server est installé
 npm install mongodb-memory-server --save-dev
 ```
 
 ### Timeout des tests
+
 ```bash
 # Augmenter le timeout dans .mocharc.json
 {
@@ -124,6 +133,7 @@ npm install mongodb-memory-server --save-dev
 ```
 
 ### Tests qui échouent
+
 ```bash
 # Exécuter un test spécifique pour debug
 npx mocha test/auth.test.js --timeout 30000
@@ -133,15 +143,17 @@ npx mocha test/auth.test.js --timeout 30000
 
 1. Créer un nouveau fichier `*.test.js` dans le dossier `test/`
 2. Suivre la structure existante :
+
    ```javascript
    const request = require('supertest');
    const { expect } = require('chai');
    const app = require('../server');
-   
+
    describe('Mon Test', function () {
      // Tests ici
    });
    ```
+
 3. Exécuter les tests pour vérifier
 
 ## 🎯 Bonnes Pratiques

@@ -17,7 +17,7 @@ class ProductController {
       // Filters
       const filters = {
         isDeleted: false,
-        status: "published",
+        status: 'published',
         isVisible: true,
       };
 
@@ -28,12 +28,12 @@ class ProductController {
 
       // Search by title (optional)
       if (req.query.search) {
-        filters.title = { $regex: req.query.search, $options: "i" };
+        filters.title = { $regex: req.query.search, $options: 'i' };
       }
 
       const products = await Product.find(filters)
-        .populate("category", "title slug")
-        .populate("seller", "firstName lastName email")
+        .populate('category', 'title slug')
+        .populate('seller', 'firstName lastName email')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
@@ -53,7 +53,6 @@ class ProductController {
       await redisClient.set('products', JSON.stringify(responseData));
 
       res.status(200).json(responseData);
-
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -79,7 +78,7 @@ class ProductController {
       }
 
       // Deleted filter (optional)
-      if (req.query.includeDeleted !== "true") {
+      if (req.query.includeDeleted !== 'true') {
         filters.isDeleted = false;
       }
 
@@ -90,12 +89,12 @@ class ProductController {
 
       // Search by title (optional)
       if (req.query.search) {
-        filters.title = { $regex: req.query.search, $options: "i" };
+        filters.title = { $regex: req.query.search, $options: 'i' };
       }
 
       const products = await Product.find(filters)
-        .populate("category", "title slug")
-        .populate("seller", "firstName lastName email")
+        .populate('category', 'title slug')
+        .populate('seller', 'firstName lastName email')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
@@ -138,8 +137,8 @@ class ProductController {
       }
 
       const products = await Product.find(filters)
-        .populate("category", "title slug")
-        .populate("seller", "firstName lastName email")
+        .populate('category', 'title slug')
+        .populate('seller', 'firstName lastName email')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
@@ -164,17 +163,16 @@ class ProductController {
 
   async getProductById(req, res) {
     try {
-
       if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
         return res.status(400).json({
           success: false,
-          message: "A valid product ID is required",
+          message: 'A valid product ID is required',
         });
       }
 
       const product = await Product.findById(req.params.id)
-        .populate("category", "title slug")
-        .populate("seller", "firstName lastName email");
+        .populate('category', 'title slug')
+        .populate('seller', 'firstName lastName email');
 
       //   if (!product || product.isDeleted) {
       //     return res.status(404).json({
@@ -191,14 +189,24 @@ class ProductController {
       //     });
       //   }
 
-      if (!product || product.isDeleted || product.status !== 'published' || !product.isVisible) {
-        return res.status(404).json({ success: false, message: 'Product not found' });
+      if (
+        !product ||
+        product.isDeleted ||
+        product.status !== 'published' ||
+        !product.isVisible
+      ) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Product not found' });
       }
 
       const responseData = { success: true, data: product };
 
       // 🟢 Store in Redis
-      await redisClient.set(`product_${req.params.id}`, JSON.stringify(responseData));
+      await redisClient.set(
+        `product_${req.params.id}`,
+        JSON.stringify(responseData)
+      );
 
       res.status(200).json({ responseData });
     } catch (error) {
@@ -235,7 +243,7 @@ class ProductController {
       if (images.length === 0) {
         return res.status(400).json({
           success: false,
-          message: "At least one image is required",
+          message: 'At least one image is required',
         });
       }
 
@@ -252,16 +260,16 @@ class ProductController {
         category,
         images,
         seller: req.user._id, // Set seller to current user
-        status: status || "published", // Default to published
+        status: status || 'published', // Default to published
         isVisible: isVisible !== undefined ? isVisible : true, // Default to visible
       });
 
       await product.save();
-      await product.populate("category", "title slug");
-      await product.populate("seller", "firstName lastName email");
+      await product.populate('category', 'title slug');
+      await product.populate('seller', 'firstName lastName email');
 
       // 🧠 Clear old cache (important!)
-      await redisClient.del("products"); // Clear all products cache
+      await redisClient.del('products'); // Clear all products cache
       await redisClient.del(`category_${category}`); // Optional: clear cache for this category
 
       // Récupérer les admins
@@ -277,7 +285,7 @@ class ProductController {
 
       res.status(201).json({
         success: true,
-        message: "Product created successfully",
+        message: 'Product created successfully',
         data: product,
       });
     } catch (error) {
@@ -290,12 +298,13 @@ class ProductController {
 
   async updateProduct(req, res) {
     try {
-      const { title, description, price, stock, category, status, isVisible } = req.body;
+      const { title, description, price, stock, category, status, isVisible } =
+        req.body;
 
       if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
         return res.status(400).json({
           success: false,
-          message: "A valid product ID is required",
+          message: 'A valid product ID is required',
         });
       }
       // Find existing product
@@ -303,7 +312,7 @@ class ProductController {
       if (!existingProduct || existingProduct.isDeleted) {
         return res.status(404).json({
           success: false,
-          message: "Product not found",
+          message: 'Product not found',
         });
       }
 
@@ -343,7 +352,7 @@ class ProductController {
         if (images.length === 0) {
           return res.status(400).json({
             success: false,
-            message: "At least one image is required",
+            message: 'At least one image is required',
           });
         }
 
@@ -360,12 +369,11 @@ class ProductController {
         updateData,
         { new: true, runValidators: true }
       )
-        .populate("category", "title slug")
-        .populate("seller", "firstName lastName email");
-
+        .populate('category', 'title slug')
+        .populate('seller', 'firstName lastName email');
 
       // 🧠 Clear outdated cache
-      await redisClient.del("products"); // remove cached list of all products
+      await redisClient.del('products'); // remove cached list of all products
       await redisClient.del(`product_${req.params.id}`); // remove cached single product
       if (category) await redisClient.del(`category_${category}`); // optional, if you cache products by category
 
@@ -380,7 +388,7 @@ class ProductController {
 
       res.status(200).json({
         success: true,
-        message: "Product updated successfully",
+        message: 'Product updated successfully',
         data: product,
       });
     } catch (error) {
@@ -398,7 +406,7 @@ class ProductController {
       if (!product || product.isDeleted) {
         return res.status(404).json({
           success: false,
-          message: "Product not found",
+          message: 'Product not found',
         });
       }
 
@@ -407,16 +415,17 @@ class ProductController {
       await product.save();
 
       //  Clear outdated cache
-      await redisClient.del("products"); // remove cached list of all products
+      await redisClient.del('products'); // remove cached list of all products
       await redisClient.del(`product_${req.params.id}`); // remove cached single product
 
       // Optional: if you cache by category or seller
-      if (product.category) await redisClient.del(`category_${product.category}`);
+      if (product.category)
+        await redisClient.del(`category_${product.category}`);
       if (product.seller) await redisClient.del(`seller_${product.seller}`);
 
       res.status(200).json({
         success: true,
-        message: "Product deleted successfully",
+        message: 'Product deleted successfully',
       });
     } catch (error) {
       res.status(500).json({
@@ -459,12 +468,12 @@ class ProductController {
     let { column, value } = req.query;
 
     try {
-      if (column === "category") {
+      if (column === 'category') {
         const category = await Category.findOne({ slug: value });
         if (!category) {
           return res.status(404).json({
             success: false,
-            message: "Category not found",
+            message: 'Category not found',
           });
         }
         value = category._id;
@@ -483,7 +492,7 @@ class ProductController {
       if (!product || product.isDeleted) {
         return res.status(404).json({
           success: false,
-          message: "Product not found",
+          message: 'Product not found',
         });
       }
 
@@ -491,7 +500,6 @@ class ProductController {
         success: true,
         data: product,
       };
-
 
       await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
 
@@ -503,7 +511,6 @@ class ProductController {
       });
     }
   }
-
 }
 
 module.exports = new ProductController();
