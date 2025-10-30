@@ -5,13 +5,13 @@ class ProfileController {
     try {
       const { firstName, lastName, nickname, email } = req.body;
 
-
       const user = await User.findById(req.user._id);
 
       if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' });
+        return res
+          .status(404)
+          .json({ success: false, message: 'User not found' });
       }
-
 
       if (firstName) user.firstName = firstName;
       if (lastName) user.lastName = lastName;
@@ -28,7 +28,6 @@ class ProfileController {
           lastName: updatedUser.lastName,
           nickname: updatedUser.nickname,
           email: updatedUser.email,
-
         },
       });
     } catch (error) {
@@ -45,36 +44,53 @@ class ProfileController {
       const { oldPassword, newPassword, confirmPassword } = req.body;
 
       if (!oldPassword || !newPassword || !confirmPassword) {
-        return res.status(400).json({ success: false, message: 'Please provide old, new, and confirm password' });
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: 'Please provide old, new, and confirm password',
+          });
       }
 
       if (newPassword !== confirmPassword) {
-        return res.status(400).json({ success: false, message: 'New password and confirm password do not match' });
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: 'New password and confirm password do not match',
+          });
       }
 
       const user = await User.findById(req.user._id);
-      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+      if (!user)
+        return res
+          .status(404)
+          .json({ success: false, message: 'User not found' });
 
       const isMatch = await bcrypt.compare(oldPassword, user.password);
       if (!isMatch) {
-        return res.status(401).json({ success: false, message: 'Old password is incorrect' });
+        return res
+          .status(401)
+          .json({ success: false, message: 'Old password is incorrect' });
       }
 
       user.password = newPassword;
 
       await user.save();
 
-      return res.status(200).json({ success: true, message: 'Password updated successfully ✅' });
-
+      return res
+        .status(200)
+        .json({ success: true, message: 'Password updated successfully ✅' });
     } catch (error) {
       console.error('Error changing password:', error);
-      return res.status(500).json({ success: false, message: error.message || 'Server Error' });
+      return res
+        .status(500)
+        .json({ success: false, message: error.message || 'Server Error' });
     }
   }
 
   async getProfile(req, res) {
     try {
-
       const user = await User.findById(req.user._id).populate('role', 'name');
 
       if (!user) {
@@ -83,7 +99,6 @@ class ProfileController {
           message: 'User not found',
         });
       }
-
 
       return res.status(200).json({
         success: true,
@@ -108,9 +123,6 @@ class ProfileController {
       });
     }
   }
-
-
-
 }
 
 module.exports = ProfileController;

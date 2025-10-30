@@ -28,6 +28,7 @@ API e-commerce complète avec Express.js et MongoDB. Gestion des produits, caté
 ## ✨ Fonctionnalités
 
 ### 🔐 Authentification
+
 - ✅ Inscription utilisateur avec validation
 - ✅ Connexion avec JWT
 - ✅ Hashage des mots de passe (bcrypt)
@@ -35,12 +36,14 @@ API e-commerce complète avec Express.js et MongoDB. Gestion des produits, caté
 - ✅ Premier utilisateur devient automatiquement ADMIN
 
 ### 🏷️ Gestion des Catégories
+
 - ✅ CRUD complet
 - ✅ Système de slug automatique
 - ✅ Soft delete
 - ✅ Routes publiques (GET) et protégées (POST/PUT/DELETE - Admin only)
 
 ### 📦 Gestion des Produits
+
 - ✅ CRUD complet avec validation
 - ✅ Relation avec catégories (populate)
 - ✅ Gestion du stock
@@ -49,12 +52,14 @@ API e-commerce complète avec Express.js et MongoDB. Gestion des produits, caté
 - ✅ Routes publiques (GET) et protégées (POST/PUT/DELETE - Admin only)
 
 ### 🛡️ Sécurité
+
 - ✅ JWT avec expiration configurable
 - ✅ Middleware d'authentification
 - ✅ Contrôle d'accès basé sur les rôles
 - ✅ Validation des données
 
 ### 📚 Documentation
+
 - ✅ Swagger/OpenAPI intégré
 - ✅ Interface interactive
 - ✅ Exemples de requêtes
@@ -127,11 +132,13 @@ Cette commande crée les rôles par défaut (USER et ADMIN) dans la base de donn
 ### 5. Démarrer le serveur
 
 **Mode développement (avec nodemon):**
+
 ```bash
 npm run dev
 ```
 
 **Mode production:**
+
 ```bash
 npm start
 ```
@@ -188,11 +195,13 @@ E-Market_API/
 ## 🌐 API Endpoints
 
 ### 🏠 Base URL
+
 ```
 http://localhost:3000
 ```
 
 ### 📊 Health Check
+
 ```http
 GET /health
 ```
@@ -201,13 +210,14 @@ GET /health
 
 ### 🔐 Authentication (`/api/auth`)
 
-| Méthode | Endpoint | Description | Auth Required |
-|---------|----------|-------------|---------------|
-| POST | `/api/auth/register` | Créer un nouveau compte | ❌ |
-| POST | `/api/auth/login` | Se connecter | ❌ |
-| POST | `/api/auth/logout` | Se déconnecter | ✅ |
+| Méthode | Endpoint             | Description             | Auth Required |
+| ------- | -------------------- | ----------------------- | ------------- |
+| POST    | `/api/auth/register` | Créer un nouveau compte | ❌            |
+| POST    | `/api/auth/login`    | Se connecter            | ❌            |
+| POST    | `/api/auth/logout`   | Se déconnecter          | ✅            |
 
 #### Exemple: Register
+
 ```json
 POST /api/auth/register
 Content-Type: application/json
@@ -220,6 +230,7 @@ Content-Type: application/json
 ```
 
 #### Exemple: Login
+
 ```json
 POST /api/auth/login
 Content-Type: application/json
@@ -231,6 +242,7 @@ Content-Type: application/json
 ```
 
 **Réponse:**
+
 ```json
 {
   "success": true,
@@ -251,15 +263,16 @@ Content-Type: application/json
 
 ### 🏷️ Categories (`/api/categories`)
 
-| Méthode | Endpoint | Description | Auth Required | Admin Only |
-|---------|----------|-------------|---------------|------------|
-| GET | `/api/categories` | Liste toutes les catégories | ❌ | ❌ |
-| GET | `/api/categories/:id` | Détails d'une catégorie | ❌ | ❌ |
-| POST | `/api/categories` | Créer une catégorie | ✅ | ✅ |
-| PUT | `/api/categories/:id` | Modifier une catégorie | ✅ | ✅ |
-| DELETE | `/api/categories/:id` | Supprimer une catégorie | ✅ | ✅ |
+| Méthode | Endpoint              | Description                 | Auth Required | Admin Only |
+| ------- | --------------------- | --------------------------- | ------------- | ---------- |
+| GET     | `/api/categories`     | Liste toutes les catégories | ❌            | ❌         |
+| GET     | `/api/categories/:id` | Détails d'une catégorie     | ❌            | ❌         |
+| POST    | `/api/categories`     | Créer une catégorie         | ✅            | ✅         |
+| PUT     | `/api/categories/:id` | Modifier une catégorie      | ✅            | ✅         |
+| DELETE  | `/api/categories/:id` | Supprimer une catégorie     | ✅            | ✅         |
 
 #### Exemple: Create Category
+
 ```json
 POST /api/categories
 Authorization: Bearer YOUR_TOKEN
@@ -274,15 +287,16 @@ Content-Type: application/json
 
 ### 📦 Products (`/api/products`)
 
-| Méthode | Endpoint | Description | Auth Required | Admin Only |
-|---------|----------|-------------|---------------|------------|
-| GET | `/api/products` | Liste tous les produits | ❌ | ❌ |
-| GET | `/api/products/:id` | Détails d'un produit | ❌ | ❌ |
-| POST | `/api/products` | Créer un produit | ✅ | ✅ |
-| PUT | `/api/products/:id` | Modifier un produit | ✅ | ✅ |
-| DELETE | `/api/products/:id` | Supprimer un produit | ✅ | ✅ |
+| Méthode | Endpoint            | Description             | Auth Required | Admin Only |
+| ------- | ------------------- | ----------------------- | ------------- | ---------- |
+| GET     | `/api/products`     | Liste tous les produits | ❌            | ❌         |
+| GET     | `/api/products/:id` | Détails d'un produit    | ❌            | ❌         |
+| POST    | `/api/products`     | Créer un produit        | ✅            | ✅         |
+| PUT     | `/api/products/:id` | Modifier un produit     | ✅            | ✅         |
+| DELETE  | `/api/products/:id` | Supprimer un produit    | ✅            | ✅         |
 
 #### Exemple: Create Product
+
 ```json
 POST /api/products
 Authorization: Bearer YOUR_TOKEN
@@ -334,37 +348,44 @@ Une documentation interactive complète est disponible via Swagger UI.
 
 Créez un environnement Postman avec ces variables:
 
-| Variable | Valeur Initiale | Valeur Courante |
-|----------|----------------|-----------------|
-| `baseUrl` | `http://localhost:3000` | - |
-| `authToken` | - | (automatique après login) |
+| Variable    | Valeur Initiale         | Valeur Courante           |
+| ----------- | ----------------------- | ------------------------- |
+| `baseUrl`   | `http://localhost:3000` | -                         |
+| `authToken` | -                       | (automatique après login) |
 
 #### 2. Workflow de test
 
 **Étape 1: Créer un compte**
+
 ```http
 POST {{baseUrl}}/api/auth/register
 ```
 
 **Étape 2: Se connecter**
+
 ```http
 POST {{baseUrl}}/api/auth/login
 ```
+
 → Copiez le `token` de la réponse dans `{{authToken}}`
 
 **Étape 3: Créer une catégorie**
+
 ```http
 POST {{baseUrl}}/api/categories
 Authorization: Bearer {{authToken}}
 ```
 
 **Étape 4: Récupérer les catégories**
+
 ```http
 GET {{baseUrl}}/api/categories
 ```
+
 → Copiez un `_id` pour l'utiliser dans les produits
 
 **Étape 5: Créer un produit**
+
 ```http
 POST {{baseUrl}}/api/products
 Authorization: Bearer {{authToken}}

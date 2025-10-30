@@ -1,28 +1,31 @@
-import js from "@eslint/js";
-import globals from "globals";
-import { defineConfig } from "eslint/config";
+import js from '@eslint/js';
+import globals from 'globals';
+import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
   {
-    files: ["**/*.{js,mjs,cjs}"],
+    files: ['**/*.{js,mjs,cjs}'],
     plugins: { js },
-    extends: ["js/recommended"],
+    extends: ['js/recommended'],
     languageOptions: {
       globals: {
-        ...globals.node,     // ✅ Node globals (process, require, etc.)
-        ...globals.es2021,   // ✅ Modern JS globals
+        ...globals.node,
+        ...globals.es2021,
       },
+    },
+    rules: {
+      'no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
     },
   },
   {
-    files: ["**/*.js"],
-    languageOptions: { sourceType: "commonjs" },
+    files: ['**/*.js'],
+    languageOptions: { sourceType: 'commonjs' },
   },
   {
-    files: ["**/test/**/*.js"],
+    files: ['**/test/**/*.js'],
     languageOptions: {
       globals: {
-        ...globals.mocha, // ✅ testing globals
+        ...globals.mocha,
       },
     },
   },

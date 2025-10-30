@@ -27,18 +27,16 @@ describe('User Tests', function () {
       lastName: 'User',
       email: 'test.user@test.com',
       password: 'password123',
-      role: testRole._id
+      role: testRole._id,
     });
     await testUser.save();
 
     // Login to get token
-    const loginRes = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'test.user@test.com',
-        password: 'password123'
-      });
-    
+    const loginRes = await request(app).post('/api/auth/login').send({
+      email: 'test.user@test.com',
+      password: 'password123',
+    });
+
     authToken = loginRes.body.token;
   });
 
@@ -67,8 +65,7 @@ describe('User Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app)
-        .get('/api/profiles/me');
+      const res = await request(app).get('/api/profiles/me');
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -80,7 +77,7 @@ describe('User Tests', function () {
       const updateData = {
         firstName: 'Updated',
         lastName: 'Name',
-        nickname: 'updated_user'
+        nickname: 'updated_user',
       };
 
       const res = await request(app)
@@ -104,12 +101,10 @@ describe('User Tests', function () {
 
     it('should return 401 without authentication', async function () {
       const updateData = {
-        firstName: 'Updated'
+        firstName: 'Updated',
       };
 
-      const res = await request(app)
-        .put('/api/profiles/me')
-        .send(updateData);
+      const res = await request(app).put('/api/profiles/me').send(updateData);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -117,7 +112,7 @@ describe('User Tests', function () {
 
     it('should return 400 for invalid email format', async function () {
       const updateData = {
-        email: 'invalid-email'
+        email: 'invalid-email',
       };
 
       const res = await request(app)
@@ -136,12 +131,12 @@ describe('User Tests', function () {
         lastName: 'User',
         email: 'another@test.com',
         password: 'password123',
-        role: testRole._id
+        role: testRole._id,
       });
       await anotherUser.save();
 
       const updateData = {
-        email: 'another@test.com'
+        email: 'another@test.com',
       };
 
       const res = await request(app)
@@ -162,7 +157,7 @@ describe('User Tests', function () {
       const passwordData = {
         oldPassword: 'password123',
         newPassword: 'newpassword123',
-        confirmPassword: 'newpassword123'
+        confirmPassword: 'newpassword123',
       };
 
       const res = await request(app)
@@ -175,12 +170,10 @@ describe('User Tests', function () {
       expect(res.body).to.have.property('message');
 
       // Verify password was changed by trying to login with new password
-      const loginRes = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test.user@test.com',
-          password: 'newpassword123'
-        });
+      const loginRes = await request(app).post('/api/auth/login').send({
+        email: 'test.user@test.com',
+        password: 'newpassword123',
+      });
 
       expect(loginRes.status).to.equal(200);
     });
@@ -189,7 +182,7 @@ describe('User Tests', function () {
       const passwordData = {
         oldPassword: 'password123',
         newPassword: 'newpassword123',
-        confirmPassword: 'newpassword123'
+        confirmPassword: 'newpassword123',
       };
 
       const res = await request(app)
@@ -204,7 +197,7 @@ describe('User Tests', function () {
       const passwordData = {
         oldPassword: 'wrongpassword',
         newPassword: 'newpassword123',
-        confirmPassword: 'newpassword123'
+        confirmPassword: 'newpassword123',
       };
 
       const res = await request(app)
@@ -220,7 +213,7 @@ describe('User Tests', function () {
       const passwordData = {
         oldPassword: 'password123',
         newPassword: 'newpassword123',
-        confirmPassword: 'differentpassword'
+        confirmPassword: 'differentpassword',
       };
 
       const res = await request(app)
@@ -234,7 +227,7 @@ describe('User Tests', function () {
 
     it('should return 400 for missing required fields', async function () {
       const passwordData = {
-        oldPassword: 'password123'
+        oldPassword: 'password123',
         // Missing newPassword and confirmPassword
       };
 
@@ -264,8 +257,7 @@ describe('User Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app)
-        .delete('/api/profiles/me');
+      const res = await request(app).delete('/api/profiles/me');
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);

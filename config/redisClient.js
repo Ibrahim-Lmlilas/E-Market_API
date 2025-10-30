@@ -1,7 +1,7 @@
 const redis = require('redis');
 
 const redisClient = redis.createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379'
+  url: process.env.REDIS_URL || 'redis://localhost:6379',
 });
 
 redisClient.on('error', (err) => console.error('❌ Redis Error:', err));
@@ -17,10 +17,9 @@ redisClient.on('error', (err) => console.error('❌ Redis Error:', err));
 
 module.exports = redisClient;
 
-
 //pour voir data caching ecrire dans terminal
 //redis-cli
 // apres ecrire
 //keys *
 //pour voir contenu ecrire
-//get (key li tl3 lik f terminal) 
+//get (key li tl3 lik f terminal)
