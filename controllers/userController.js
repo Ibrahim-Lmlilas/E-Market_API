@@ -3,7 +3,6 @@ const Role = require('../models/Role');
 const mongoose = require('mongoose');
 
 class UserController {
-
   // Get all users
   async getAllUsers(req, res) {
     try {
@@ -14,25 +13,23 @@ class UserController {
       res.status(200).json({
         success: true,
         count: users.length,
-        data: users
+        data: users,
       });
-
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error.message
+        error: error.message,
       });
     }
   }
 
   // Get user by ID
   async getUserById(req, res) {
-
     if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({
         success: false,
-        message: "A valid user ID is required",
+        message: 'A valid user ID is required',
       });
     }
 
@@ -44,20 +41,19 @@ class UserController {
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'User not found'
+          message: 'User not found',
         });
       }
 
       res.status(200).json({
         success: true,
-        data: user
+        data: user,
       });
-
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -72,7 +68,7 @@ class UserController {
       if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: 'Email already exists'
+          message: 'Email already exists',
         });
       }
 
@@ -81,7 +77,7 @@ class UserController {
       if (!userRole) {
         return res.status(500).json({
           success: false,
-          message: 'Default role not found. Please run setup-roles script.'
+          message: 'Default role not found. Please run setup-roles script.',
         });
       }
 
@@ -92,7 +88,7 @@ class UserController {
         email,
         password,
         phoneNumber,
-        role: userRole._id
+        role: userRole._id,
       });
 
       await user.save();
@@ -104,14 +100,13 @@ class UserController {
       res.status(201).json({
         success: true,
         message: 'User created successfully',
-        data: userResponse
+        data: userResponse,
       });
-
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -124,7 +119,7 @@ class UserController {
       if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
         return res.status(400).json({
           success: false,
-          message: "A valid user ID is required",
+          message: 'A valid user ID is required',
         });
       }
 
@@ -132,13 +127,13 @@ class UserController {
       if (email) {
         const existingUser = await User.findOne({
           email,
-          _id: { $ne: req.params.id }
+          _id: { $ne: req.params.id },
         });
 
         if (existingUser) {
           return res.status(400).json({
             success: false,
-            message: 'Email already exists'
+            message: 'Email already exists',
           });
         }
       }
@@ -152,32 +147,30 @@ class UserController {
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'User not found'
+          message: 'User not found',
         });
       }
 
       res.status(200).json({
         success: true,
         message: 'User updated successfully',
-        data: user
+        data: user,
       });
-
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error.message
+        error: error.message,
       });
     }
   }
 
   // Delete user
   async deleteUser(req, res) {
-
     if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({
         success: false,
-        message: "A valid user ID is required",
+        message: 'A valid user ID is required',
       });
     }
 
@@ -187,7 +180,7 @@ class UserController {
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'User not found'
+          message: 'User not found',
         });
       }
 
@@ -195,18 +188,16 @@ class UserController {
 
       res.status(200).json({
         success: true,
-        message: 'User deleted successfully'
+        message: 'User deleted successfully',
       });
-
     } catch (error) {
       res.status(500).json({
         success: false,
         message: 'Server error',
-        error: error.message
+        error: error.message,
       });
     }
   }
-
 }
 
 module.exports = new UserController();

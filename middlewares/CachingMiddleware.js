@@ -4,7 +4,8 @@ const cache = (keyBuilder) => {
   return async (req, res, next) => {
     try {
       // نتحقق واش key ثابت ولا دالة
-      const key = typeof keyBuilder === 'function' ? keyBuilder(req) : keyBuilder;
+      const key =
+        typeof keyBuilder === 'function' ? keyBuilder(req) : keyBuilder;
       const data = await redisClient.get(key);
 
       if (data) {

@@ -35,7 +35,7 @@ describe('Cart Tests', function () {
       lastName: 'User',
       email: 'test.user@test.com',
       password: 'password123',
-      role: testRole._id
+      role: testRole._id,
     });
     await testUser.save();
 
@@ -51,18 +51,16 @@ describe('Cart Tests', function () {
       stock: 50,
       category: testCategory._id,
       seller: testUser._id,
-      images: [{ url: 'https://example.com/test.jpg', isMain: true }]
+      images: [{ url: 'https://example.com/test.jpg', isMain: true }],
     });
     await testProduct.save();
 
     // Login to get token
-    const loginRes = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'test.user@test.com',
-        password: 'password123'
-      });
-    
+    const loginRes = await request(app).post('/api/auth/login').send({
+      email: 'test.user@test.com',
+      password: 'password123',
+    });
+
     authToken = loginRes.body.token;
   });
 
@@ -107,8 +105,7 @@ describe('Cart Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app)
-        .get('/api/cart');
+      const res = await request(app).get('/api/cart');
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -119,7 +116,7 @@ describe('Cart Tests', function () {
     it('should add item to cart', async function () {
       const cartItemData = {
         product_id: testProduct._id,
-        quantity: 2
+        quantity: 2,
       };
 
       const res = await request(app)
@@ -130,7 +127,10 @@ describe('Cart Tests', function () {
       expect(res.status).to.equal(201);
       expect(res.body).to.have.property('success', true);
       expect(res.body).to.have.property('data');
-      expect(res.body.data).to.have.property('product_id', testProduct._id.toString());
+      expect(res.body.data).to.have.property(
+        'product_id',
+        testProduct._id.toString()
+      );
       expect(res.body.data).to.have.property('quantity', 2);
 
       testCartItem = await CartItem.findOne({ product: testProduct._id });
@@ -139,12 +139,10 @@ describe('Cart Tests', function () {
     it('should return 401 without authentication', async function () {
       const cartItemData = {
         product_id: testProduct._id,
-        quantity: 2
+        quantity: 2,
       };
 
-      const res = await request(app)
-        .post('/api/cart/items')
-        .send(cartItemData);
+      const res = await request(app).post('/api/cart/items').send(cartItemData);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -152,7 +150,7 @@ describe('Cart Tests', function () {
 
     it('should return 400 for missing product_id', async function () {
       const cartItemData = {
-        quantity: 2
+        quantity: 2,
       };
 
       const res = await request(app)
@@ -166,7 +164,7 @@ describe('Cart Tests', function () {
 
     it('should return 400 for missing quantity', async function () {
       const cartItemData = {
-        product_id: testProduct._id
+        product_id: testProduct._id,
       };
 
       const res = await request(app)
@@ -181,7 +179,7 @@ describe('Cart Tests', function () {
     it('should return 400 for invalid product_id', async function () {
       const cartItemData = {
         product_id: 'invalid-id',
-        quantity: 2
+        quantity: 2,
       };
 
       const res = await request(app)
@@ -197,7 +195,7 @@ describe('Cart Tests', function () {
       const fakeId = '507f1f77bcf86cd799439011';
       const cartItemData = {
         product_id: fakeId,
-        quantity: 2
+        quantity: 2,
       };
 
       const res = await request(app)
@@ -219,14 +217,14 @@ describe('Cart Tests', function () {
       testCartItem = new CartItem({
         cart: testCart._id,
         product: testProduct._id,
-        quantity: 1
+        quantity: 1,
       });
       await testCartItem.save();
     });
 
     it('should update cart item quantity', async function () {
       const updateData = {
-        quantity: 5
+        quantity: 5,
       };
 
       const res = await request(app)
@@ -246,7 +244,7 @@ describe('Cart Tests', function () {
 
     it('should return 401 without authentication', async function () {
       const updateData = {
-        quantity: 5
+        quantity: 5,
       };
 
       const res = await request(app)
@@ -259,7 +257,7 @@ describe('Cart Tests', function () {
 
     it('should return 400 for invalid quantity', async function () {
       const updateData = {
-        quantity: -1
+        quantity: -1,
       };
 
       const res = await request(app)
@@ -274,7 +272,7 @@ describe('Cart Tests', function () {
     it('should return 404 for non-existent cart item', async function () {
       const fakeId = '507f1f77bcf86cd799439011';
       const updateData = {
-        quantity: 5
+        quantity: 5,
       };
 
       const res = await request(app)
@@ -296,7 +294,7 @@ describe('Cart Tests', function () {
       testCartItem = new CartItem({
         cart: testCart._id,
         product: testProduct._id,
-        quantity: 1
+        quantity: 1,
       });
       await testCartItem.save();
     });
@@ -316,8 +314,9 @@ describe('Cart Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app)
-        .delete(`/api/cart/items/${testCartItem._id}`);
+      const res = await request(app).delete(
+        `/api/cart/items/${testCartItem._id}`
+      );
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -343,7 +342,7 @@ describe('Cart Tests', function () {
       testCartItem = new CartItem({
         cart: testCart._id,
         product: testProduct._id,
-        quantity: 2
+        quantity: 2,
       });
       await testCartItem.save();
     });
@@ -363,8 +362,7 @@ describe('Cart Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app)
-        .delete('/api/cart');
+      const res = await request(app).delete('/api/cart');
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);

@@ -12,7 +12,9 @@ const createProducts = async () => {
 
     const categories = await Category.find();
     if (categories.length === 0) {
-      console.log('⚠️ No categories found. Please run createCategories.js first.');
+      console.log(
+        '⚠️ No categories found. Please run createCategories.js first.'
+      );
       return;
     }
 

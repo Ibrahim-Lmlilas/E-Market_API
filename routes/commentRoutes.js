@@ -37,7 +37,13 @@ const { cache } = require('../middlewares/CachingMiddleware');
  *       403:
  *         description: Forbidden (not admin)
  */
-router.get('/v2', protect, adminOnly, cache('comments_all'), commentController.getAllComments);
+router.get(
+  '/v2',
+  protect,
+  adminOnly,
+  cache('comments_all'),
+  commentController.getAllComments
+);
 
 /**
  * @swagger
@@ -73,7 +79,11 @@ router.get('/v2', protect, adminOnly, cache('comments_all'), commentController.g
  *       404:
  *         description: Product not found
  */
-router.get('/v2/product/:productId', cache((req) => `comments_product_${req.params.productId}`), commentController.getCommentsByProduct);
+router.get(
+  '/v2/product/:productId',
+  cache((req) => `comments_product_${req.params.productId}`),
+  commentController.getCommentsByProduct
+);
 
 /**
  * @swagger
@@ -139,7 +149,12 @@ router.post('/v2', protect, commentController.createComment);
  *       404:
  *         description: Comment not found
  */
-router.put('/v2/:id', protect, validator.validate(CommentSchema), commentController.updateComment);
+router.put(
+  '/v2/:id',
+  protect,
+  validator.validate(CommentSchema),
+  commentController.updateComment
+);
 
 /**
  * @swagger
@@ -182,6 +197,12 @@ router.delete('/v2/:id', protect, commentController.deleteComment);
  *       403:
  *         description: Forbidden (not seller)
  */
-router.get('/v2/seller/my-products', protect, isSeller,  cache((req) => `comments_seller_${req.user._id}`), commentController.getSellerProductComments);
+router.get(
+  '/v2/seller/my-products',
+  protect,
+  isSeller,
+  cache((req) => `comments_seller_${req.user._id}`),
+  commentController.getSellerProductComments
+);
 
 module.exports = router;
