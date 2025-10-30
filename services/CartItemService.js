@@ -36,7 +36,7 @@ class CartItemService {
 
             await cartItem.save();
             return cartItem;
-        } catch (error) {
+        } catch (_) {
             return false;
         }
     }
@@ -45,7 +45,7 @@ class CartItemService {
         try {
             const cartItem = await CartItem.findByIdAndDelete(cartItemId);
             return cartItem;
-        } catch (error) {
+        } catch (_) {
             return null;
         }
     }
@@ -53,8 +53,9 @@ class CartItemService {
     async clearCart (cartId) {
         try {
             const cartItems = await CartItem.deleteMany({ cart_id: cartId });
+            if (!cartItems) return false;
             return true;
-        } catch (error) {
+        } catch (_) {
             return false;
         }
     }

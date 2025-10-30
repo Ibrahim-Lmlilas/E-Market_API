@@ -15,7 +15,10 @@
     "clear-setup": "npm run clear-db && npm run setup-roles && npm run setup-users && npm run setup-categories && npm run setup-products",
     "test": "mocha",
     "test:watch": "mocha --watch",
-    "test:coverage": "nyc mocha"
+    "test:coverage": "nyc mocha",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+
   },
   "repository": {
     "type": "git",
@@ -49,12 +52,16 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
     "chai": "^4.5.0",
     "chai-http": "^5.1.2",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0",
     "mocha": "^11.7.4",
     "mongodb-memory-server": "^9.5.0",
     "nodemon": "^3.1.10",
     "nyc": "^17.1.0",
+    "prettier": "^3.6.2",
     "supertest": "^7.1.4"
   },
   "nyc": {

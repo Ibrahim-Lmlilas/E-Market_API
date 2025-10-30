@@ -1,6 +1,8 @@
 const Category = require('../models/Category');
 const redisClient = require('../config/redisClient');
 const NotificationService = require('../services/NotificationService');
+const mongoose = require('mongoose');
+
 class CategoryController {
 
     async getAllCategories(req, res) {

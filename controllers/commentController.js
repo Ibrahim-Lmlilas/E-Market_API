@@ -2,6 +2,7 @@ const Comment = require("../models/Comment");
 const Product = require("../models/Product");
 const { redisClient } = require("../server");
 const NotificationService = require('../services/NotificationService');
+const mongoose = require("mongoose");
 
 class CommentController {
   //  Create a new comment

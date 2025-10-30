@@ -1,10 +1,8 @@
 const Cart = require('../models/cart');
 const CartItem = require('../models/cartItem');
 const Coupon = require('../models/Coupon');
-const Product = require('../models/Product');
 const Order = require('../models/Order');
 const CartService = require('./CartService');
-const CouponService = require('./CouponService');
 
 class OrderService {
 

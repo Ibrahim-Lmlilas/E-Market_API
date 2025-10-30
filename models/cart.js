@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
-
+const CartItem = require('./cartItem');
 
 const cartSchema = new mongoose.Schema({
   uuid: {
