@@ -34,12 +34,10 @@ describe('Authentication Tests', function () {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john.doe@test.com',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send(userData);
+      const res = await request(app).post('/api/auth/register').send(userData);
 
       expect(res.status).to.equal(201);
       expect(res.body).to.have.property('success', true);
@@ -59,12 +57,10 @@ describe('Authentication Tests', function () {
         firstName: 'Jane',
         lastName: 'Doe',
         email: 'john.doe@test.com',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send(userData);
+      const res = await request(app).post('/api/auth/register').send(userData);
 
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('success', false);
@@ -76,12 +72,10 @@ describe('Authentication Tests', function () {
         firstName: 'Test',
         lastName: 'User',
         email: 'invalid-email',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send(userData);
+      const res = await request(app).post('/api/auth/register').send(userData);
 
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('success', false);
@@ -89,13 +83,11 @@ describe('Authentication Tests', function () {
 
     it('should return 400 for missing required fields', async function () {
       const userData = {
-        firstName: 'Test'
+        firstName: 'Test',
         // Missing lastName, email, password
       };
 
-      const res = await request(app)
-        .post('/api/auth/register')
-        .send(userData);
+      const res = await request(app).post('/api/auth/register').send(userData);
 
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('success', false);
@@ -110,7 +102,7 @@ describe('Authentication Tests', function () {
         lastName: 'User',
         email: 'test.user@test.com',
         password: 'password123',
-        role: testRole._id
+        role: testRole._id,
       });
       await testUser.save();
     });
@@ -118,12 +110,10 @@ describe('Authentication Tests', function () {
     it('should login with valid credentials', async function () {
       const loginData = {
         email: 'test.user@test.com',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send(loginData);
+      const res = await request(app).post('/api/auth/login').send(loginData);
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
@@ -138,12 +128,10 @@ describe('Authentication Tests', function () {
     it('should return 401 for invalid email', async function () {
       const loginData = {
         email: 'nonexistent@test.com',
-        password: 'password123'
+        password: 'password123',
       };
 
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send(loginData);
+      const res = await request(app).post('/api/auth/login').send(loginData);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -153,12 +141,10 @@ describe('Authentication Tests', function () {
     it('should return 401 for invalid password', async function () {
       const loginData = {
         email: 'test.user@test.com',
-        password: 'wrongpassword'
+        password: 'wrongpassword',
       };
 
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send(loginData);
+      const res = await request(app).post('/api/auth/login').send(loginData);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -166,9 +152,7 @@ describe('Authentication Tests', function () {
     });
 
     it('should return 400 for missing credentials', async function () {
-      const res = await request(app)
-        .post('/api/auth/login')
-        .send({});
+      const res = await request(app).post('/api/auth/login').send({});
 
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('success', false);
@@ -183,18 +167,16 @@ describe('Authentication Tests', function () {
         lastName: 'User',
         email: 'test.user@test.com',
         password: 'password123',
-        role: testRole._id
+        role: testRole._id,
       });
       await testUser.save();
 
       // Login to get token
-      const loginRes = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test.user@test.com',
-          password: 'password123'
-        });
-      
+      const loginRes = await request(app).post('/api/auth/login').send({
+        email: 'test.user@test.com',
+        password: 'password123',
+      });
+
       authToken = loginRes.body.token;
     });
 
@@ -205,16 +187,21 @@ describe('Authentication Tests', function () {
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
-      expect(res.body).to.have.property('message', 'Logged out successfully. Please remove the token from client.');
+      expect(res.body).to.have.property(
+        'message',
+        'Logged out successfully. Please remove the token from client.'
+      );
     });
 
     it('should return 401 without token', async function () {
-      const res = await request(app)
-        .post('/api/auth/logout');
+      const res = await request(app).post('/api/auth/logout');
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
-      expect(res.body).to.have.property('message', 'Not authorized, no token provided');
+      expect(res.body).to.have.property(
+        'message',
+        'Not authorized, no token provided'
+      );
     });
 
     it('should return 401 with invalid token', async function () {
@@ -224,7 +211,10 @@ describe('Authentication Tests', function () {
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
-      expect(res.body).to.have.property('message', 'Not authorized, token failed');
+      expect(res.body).to.have.property(
+        'message',
+        'Not authorized, token failed'
+      );
     });
   });
 });

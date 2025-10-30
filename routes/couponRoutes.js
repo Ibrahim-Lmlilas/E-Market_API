@@ -8,9 +8,21 @@ const { couponSchema, editCouponSchema } = require('../utils/validationSchema');
 router.get('/', protect, adminOnly, couponController.getAllCoupons);
 router.get('/:id', protect, adminOnly, couponController.getCouponById);
 
-router.post('/', protect, adminOnly, validator.validate(couponSchema), couponController.createCoupon);
+router.post(
+  '/',
+  protect,
+  adminOnly,
+  validator.validate(couponSchema),
+  couponController.createCoupon
+);
 
-router.put('/:id', protect, adminOnly, validator.validate(editCouponSchema), couponController.updateCoupon);
+router.put(
+  '/:id',
+  protect,
+  adminOnly,
+  validator.validate(editCouponSchema),
+  couponController.updateCoupon
+);
 
 router.delete('/:id', protect, adminOnly, couponController.deleteCoupon);
 

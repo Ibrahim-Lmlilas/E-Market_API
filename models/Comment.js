@@ -22,7 +22,7 @@ const commentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 
+//
 commentSchema.index({ user_id: 1, product_id: 1 }, { unique: true });
 
 module.exports = mongoose.model('Comment', commentSchema);

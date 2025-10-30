@@ -31,7 +31,7 @@ describe('Product Tests', function () {
       lastName: 'User',
       email: 'admin@test.com',
       password: 'password123',
-      role: testRole._id
+      role: testRole._id,
     });
     await testUser.save();
 
@@ -40,13 +40,11 @@ describe('Product Tests', function () {
     await testCategory.save();
 
     // Login to get token
-    const loginRes = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'admin@test.com',
-        password: 'password123'
-      });
-    
+    const loginRes = await request(app).post('/api/auth/login').send({
+      email: 'admin@test.com',
+      password: 'password123',
+    });
+
     authToken = loginRes.body.token;
   });
 
@@ -77,7 +75,7 @@ describe('Product Tests', function () {
         stock: 10,
         category: testCategory._id,
         seller: testUser._id,
-        images: [{ url: 'https://example.com/image1.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/image1.jpg', isMain: true }],
       });
       const product2 = new Product({
         title: 'Product 2',
@@ -86,13 +84,12 @@ describe('Product Tests', function () {
         stock: 5,
         category: testCategory._id,
         seller: testUser._id,
-        images: [{ url: 'https://example.com/image2.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/image2.jpg', isMain: true }],
       });
       await product1.save();
       await product2.save();
 
-      const res = await request(app)
-        .get('/api/products');
+      const res = await request(app).get('/api/products');
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
@@ -106,8 +103,7 @@ describe('Product Tests', function () {
     });
 
     it('should return empty array when no products exist', async function () {
-      const res = await request(app)
-        .get('/api/products');
+      const res = await request(app).get('/api/products');
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
@@ -125,12 +121,11 @@ describe('Product Tests', function () {
         stock: 20,
         category: testCategory._id,
         seller: testUser._id,
-        images: [{ url: 'https://example.com/test.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/test.jpg', isMain: true }],
       });
       await testProduct.save();
 
-      const res = await request(app)
-        .get(`/api/products/${testProduct._id}`);
+      const res = await request(app).get(`/api/products/${testProduct._id}`);
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
@@ -141,16 +136,14 @@ describe('Product Tests', function () {
 
     it('should return 404 for non-existent product', async function () {
       const fakeId = '507f1f77bcf86cd799439011';
-      const res = await request(app)
-        .get(`/api/products/${fakeId}`);
+      const res = await request(app).get(`/api/products/${fakeId}`);
 
       expect(res.status).to.equal(404);
       expect(res.body).to.have.property('success', false);
     });
 
     it('should return 400 for invalid product ID format', async function () {
-      const res = await request(app)
-        .get('/api/products/invalid-id');
+      const res = await request(app).get('/api/products/invalid-id');
 
       expect(res.status).to.equal(400);
       expect(res.body).to.have.property('success', false);
@@ -165,7 +158,7 @@ describe('Product Tests', function () {
         price: 99.99,
         stock: 15,
         category: testCategory._id,
-        images: [{ url: 'https://example.com/new-product.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/new-product.jpg', isMain: true }],
       };
 
       const res = await request(app)
@@ -190,12 +183,10 @@ describe('Product Tests', function () {
         price: 99.99,
         stock: 15,
         category: testCategory._id,
-        images: [{ url: 'https://example.com/new-product.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/new-product.jpg', isMain: true }],
       };
 
-      const res = await request(app)
-        .post('/api/products')
-        .send(productData);
+      const res = await request(app).post('/api/products').send(productData);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
@@ -203,7 +194,7 @@ describe('Product Tests', function () {
 
     it('should return 400 for missing required fields', async function () {
       const productData = {
-        title: 'New Product'
+        title: 'New Product',
         // Missing description, price, stock, category, images
       };
 
@@ -223,7 +214,7 @@ describe('Product Tests', function () {
         price: -10,
         stock: 15,
         category: testCategory._id,
-        images: [{ url: 'https://example.com/new-product.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/new-product.jpg', isMain: true }],
       };
 
       const res = await request(app)
@@ -242,7 +233,7 @@ describe('Product Tests', function () {
         price: 99.99,
         stock: -5,
         category: testCategory._id,
-        images: [{ url: 'https://example.com/new-product.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/new-product.jpg', isMain: true }],
       };
 
       const res = await request(app)
@@ -264,7 +255,7 @@ describe('Product Tests', function () {
         stock: 10,
         category: testCategory._id,
         seller: testUser._id,
-        images: [{ url: 'https://example.com/original.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/original.jpg', isMain: true }],
       });
       await testProduct.save();
     });
@@ -273,7 +264,7 @@ describe('Product Tests', function () {
       const updateData = {
         title: 'Updated Product',
         price: 150,
-        stock: 20
+        stock: 20,
       };
 
       const res = await request(app)
@@ -297,7 +288,7 @@ describe('Product Tests', function () {
 
     it('should return 401 without authentication', async function () {
       const updateData = {
-        title: 'Updated Product'
+        title: 'Updated Product',
       };
 
       const res = await request(app)
@@ -311,7 +302,7 @@ describe('Product Tests', function () {
     it('should return 404 for non-existent product', async function () {
       const fakeId = '507f1f77bcf86cd799439011';
       const updateData = {
-        title: 'Updated Product'
+        title: 'Updated Product',
       };
 
       const res = await request(app)
@@ -333,7 +324,7 @@ describe('Product Tests', function () {
         stock: 5,
         category: testCategory._id,
         seller: testUser._id,
-        images: [{ url: 'https://example.com/delete.jpg', isMain: true }]
+        images: [{ url: 'https://example.com/delete.jpg', isMain: true }],
       });
       await testProduct.save();
     });
@@ -353,8 +344,7 @@ describe('Product Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app)
-        .delete(`/api/products/${testProduct._id}`);
+      const res = await request(app).delete(`/api/products/${testProduct._id}`);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);

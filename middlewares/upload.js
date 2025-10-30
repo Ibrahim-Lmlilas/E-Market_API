@@ -25,9 +25,9 @@ const upload = multer({
   storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit per file (increased for Sharp processing)
-    files: 7 // Maximum 7 files
+    files: 7, // Maximum 7 files
   },
-  fileFilter: fileFilter
+  fileFilter: fileFilter,
 });
 
 // Multiple images upload middleware
@@ -40,32 +40,34 @@ const uploadImageMiddleware = async (req, res, next) => {
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({
           success: false,
-          message: 'File too large. Maximum size is 10MB per file'
+          message: 'File too large. Maximum size is 10MB per file',
         });
       }
       if (err.code === 'LIMIT_FILE_COUNT') {
         return res.status(400).json({
           success: false,
-          message: 'Too many files. Maximum 7 files allowed'
+          message: 'Too many files. Maximum 7 files allowed',
         });
       }
       return res.status(400).json({
         success: false,
-        message: 'Upload error: ' + err.message
+        message: 'Upload error: ' + err.message,
       });
     } else if (err) {
       return res.status(400).json({
         success: false,
-        message: err.message
+        message: err.message,
       });
     }
-    
+
     // Process uploaded files with Sharp
     if (req.files && req.files.length > 0) {
       try {
         // Process all images with Sharp
-        const processedImages = await imageService.processMultipleImages(req.files);
-        
+        const processedImages = await imageService.processMultipleImages(
+          req.files
+        );
+
         // Format for the controller (compatible with existing model)
         req.body.uploadedImages = processedImages.map((processed, index) => ({
           // Original image data (compatible with existing model)
@@ -75,29 +77,28 @@ const uploadImageMiddleware = async (req, res, next) => {
           originalName: processed.original.originalName,
           size: processed.original.size,
           mimetype: processed.original.mimetype,
-          
+
           // Additional Sharp data (stored as extra fields)
           sharpData: {
             sizes: processed,
-            urls: imageService.getImageUrls(processed)
-          }
+            urls: imageService.getImageUrls(processed),
+          },
         }));
-        
+
         console.log(`✅ Processed ${req.files.length} images with Sharp`);
-        
       } catch (error) {
         console.error('❌ Sharp processing error:', error);
         return res.status(500).json({
           success: false,
-          message: 'Image processing failed: ' + error.message
+          message: 'Image processing failed: ' + error.message,
         });
       }
     }
-    
+
     next();
   });
 };
 
 module.exports = {
-  uploadImageMiddleware
+  uploadImageMiddleware,
 };

@@ -9,7 +9,10 @@ class NotificationService {
       });
       await notification.save();
     } catch (error) {
-      console.error('Erreur lors de l\'ajout de la notification:', error.message);
+      console.error(
+        "Erreur lors de l'ajout de la notification:",
+        error.message
+      );
     }
   }
 }

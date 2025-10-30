@@ -37,7 +37,11 @@ const { userSchema } = require('../utils/validationSchema');
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post('/v1/register', validator.validate(userSchema), authController.register);
+router.post(
+  '/v1/register',
+  validator.validate(userSchema),
+  authController.register
+);
 
 /**
  * @swagger

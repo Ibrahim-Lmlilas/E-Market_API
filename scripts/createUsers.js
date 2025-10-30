@@ -6,21 +6,20 @@ require('dotenv').config();
 
 const createUsers = async () => {
   try {
-
     await mongoose.connect(process.env.MONGODB_URI);
 
     await User.deleteMany({});
 
     const roles = await Role.find();
 
-    const findRole = (name) => roles.find(r => r.name === name)?._id;
+    const findRole = (name) => roles.find((r) => r.name === name)?._id;
 
     await User.create({
       firstName: 'Admin',
       lastName: 'User',
       email: 'admin@gmail.com',
       password: 'admin@gmail.com',
-      role: findRole('ADMIN')
+      role: findRole('ADMIN'),
     });
 
     await User.create({
@@ -28,7 +27,7 @@ const createUsers = async () => {
       lastName: 'User',
       email: 'seller@gmail.com',
       password: 'seller@gmail.com',
-      role: findRole('SELLER')
+      role: findRole('SELLER'),
     });
 
     await User.create({
@@ -36,7 +35,7 @@ const createUsers = async () => {
       lastName: 'User',
       email: 'user@gmail.com',
       password: 'user@gmail.com',
-      role: findRole('USER')
+      role: findRole('USER'),
     });
 
     console.log('Users created successfully!');
