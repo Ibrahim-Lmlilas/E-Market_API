@@ -44,21 +44,17 @@ class ProfileController {
       const { oldPassword, newPassword, confirmPassword } = req.body;
 
       if (!oldPassword || !newPassword || !confirmPassword) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: 'Please provide old, new, and confirm password',
-          });
+        return res.status(400).json({
+          success: false,
+          message: 'Please provide old, new, and confirm password',
+        });
       }
 
       if (newPassword !== confirmPassword) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: 'New password and confirm password do not match',
-          });
+        return res.status(400).json({
+          success: false,
+          message: 'New password and confirm password do not match',
+        });
       }
 
       const user = await User.findById(req.user._id);

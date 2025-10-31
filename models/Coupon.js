@@ -73,6 +73,10 @@ const couponSchema = new mongoose.Schema(
 couponSchema.index({ category_id: 1 });
 couponSchema.index({ user_id: 1 });
 
+couponSchema.index({ category_id: 1, user_id: 1 });
+couponSchema.index({ code: 1, expirationDate: 1 });
+couponSchema.index({ isDeleted: 1, expirationDate: 1 });
+
 couponSchema.methods.decrementUse = async function () {
   if (this.usesLeft > 0) {
     this.usesLeft -= 1;

@@ -24,5 +24,8 @@ const commentSchema = new mongoose.Schema(
 
 //
 commentSchema.index({ user_id: 1, product_id: 1 }, { unique: true });
+commentSchema.index({ product_id: 1 });
+commentSchema.index({ user_id: 1 });
+
 
 module.exports = mongoose.model('Comment', commentSchema);

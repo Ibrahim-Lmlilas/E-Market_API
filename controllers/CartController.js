@@ -11,13 +11,11 @@ class CartController {
     try {
       const exist = await CartService.getCartByUserId(userId);
       if (exist) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: 'Cart already exists',
-            data: exist,
-          });
+        return res.status(400).json({
+          success: false,
+          message: 'Cart already exists',
+          data: exist,
+        });
       }
 
       const cart = await CartService.createCart(userId);
@@ -28,13 +26,11 @@ class CartController {
         'A new cart has been created for your account.'
       );
 
-      res
-        .status(201)
-        .json({
-          success: true,
-          message: 'Cart created successfully',
-          data: cart,
-        });
+      res.status(201).json({
+        success: true,
+        message: 'Cart created successfully',
+        data: cart,
+      });
     } catch (_) {
       res.status(500).json({ success: false, message: 'error Creating Cart' });
     }
@@ -55,12 +51,10 @@ class CartController {
     try {
       const cart = await CartService.getCartByUserId(userId);
       if (!cart) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: 'Cart not found, make sure your User ID is valid',
-          });
+        return res.status(404).json({
+          success: false,
+          message: 'Cart not found, make sure your User ID is valid',
+        });
       }
       res.status(200).json({ success: true, data: cart });
     } catch (_) {
@@ -74,12 +68,10 @@ class CartController {
     try {
       const cart = await CartService.getCartByUserId(userId);
       if (!cart) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: 'Cart not found, make sure your User ID is valid',
-          });
+        return res.status(404).json({
+          success: false,
+          message: 'Cart not found, make sure your User ID is valid',
+        });
       }
       res.status(200).json({ success: true, data: cart });
     } catch (_) {
@@ -104,13 +96,11 @@ class CartController {
 
     try {
       const cart = await CartItemService.clearCart(cartId);
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: 'Cart cleared successfully',
-          data: cart,
-        });
+      res.status(200).json({
+        success: true,
+        message: 'Cart cleared successfully',
+        data: cart,
+      });
     } catch (_) {
       res.status(500).json({ success: false, message: 'error clearing cart' });
     }
@@ -271,13 +261,11 @@ class CartController {
         quantity
       );
       if (cartItem) {
-        res
-          .status(200)
-          .json({
-            success: true,
-            message: 'Cart item updated successfully',
-            data: cartItem,
-          });
+        res.status(200).json({
+          success: true,
+          message: 'Cart item updated successfully',
+          data: cartItem,
+        });
       } else {
         res
           .status(404)
@@ -305,13 +293,11 @@ class CartController {
     try {
       const cartItem = await CartItemService.deleteCartItem(cartItemId);
       if (cartItem) {
-        res
-          .status(200)
-          .json({
-            success: true,
-            message: 'Cart item deleted successfully',
-            data: cartItem,
-          });
+        res.status(200).json({
+          success: true,
+          message: 'Cart item deleted successfully',
+          data: cartItem,
+        });
       } else {
         res
           .status(404)

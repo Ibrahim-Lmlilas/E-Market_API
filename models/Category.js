@@ -7,7 +7,7 @@ const categorySchema = new mongoose.Schema(
       type: String,
       default: () => uuidv4(),
       unique: true,
-      immutable: true
+      immutable: true,
     },
 
     title: {
@@ -87,7 +87,10 @@ categorySchema.methods.toJSON = function () {
   const category = this.toObject();
   return category;
 };
+categorySchema.index({slug:1});
+categorySchema.index({title:1});
 
 const Category = mongoose.model('Category', categorySchema);
+
 
 module.exports = Category;

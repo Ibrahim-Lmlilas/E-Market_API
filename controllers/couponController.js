@@ -16,22 +16,18 @@ class CouponController {
     } = req.body;
 
     if (type !== 'fixed' && type !== 'percentage') {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Invalid discount type, must be either 'fixed' or 'percentage'",
-        });
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid discount type, must be either 'fixed' or 'percentage'",
+      });
     }
 
     if (type == 'percentage' && discount > 100) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: 'Invalid discount value, must be below 100%',
-        });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid discount value, must be below 100%',
+      });
     }
 
     try {
@@ -53,13 +49,11 @@ class CouponController {
         );
       }
 
-      res
-        .status(201)
-        .json({
-          success: true,
-          message: 'Coupon created successfully',
-          data: newCoupon,
-        });
+      res.status(201).json({
+        success: true,
+        message: 'Coupon created successfully',
+        data: newCoupon,
+      });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
@@ -136,13 +130,11 @@ class CouponController {
 
     try {
       const updatedCoupon = await CouponService.updateCoupon(id, data);
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: 'Coupon updated successfully',
-          data: updatedCoupon,
-        });
+      res.status(200).json({
+        success: true,
+        message: 'Coupon updated successfully',
+        data: updatedCoupon,
+      });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
@@ -160,13 +152,11 @@ class CouponController {
 
     try {
       const deletedCoupon = await CouponService.deleteCoupon(id);
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: 'Coupon deleted successfully',
-          data: deletedCoupon,
-        });
+      res.status(200).json({
+        success: true,
+        message: 'Coupon deleted successfully',
+        data: deletedCoupon,
+      });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }

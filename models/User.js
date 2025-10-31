@@ -105,7 +105,11 @@ const userSchema = new mongoose.Schema(
 
 // Index for performance (unique already defined in schema)
 userSchema.index({ role: 1 });
+userSchema.index({ firstName: 1 });
+userSchema.index({ lastName: 1 });
 userSchema.index({ nickname: 1 });
+userSchema.index({ email: 1 });
+userSchema.index({ uuid: 1 });
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
