@@ -68,7 +68,7 @@ app.get('/fouad', (req, res) => {
 // ---------------------Routes--------------------------
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to E-Market API',
+    message: 'Welcome to E-Market API Ci/Cd working',
     status: 'Server is running',
     version: '1.0.0',
     documentation: 'http://localhost:3000/api-docs',
