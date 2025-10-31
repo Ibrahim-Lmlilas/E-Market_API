@@ -3,7 +3,7 @@ name: Deploy Express API to Azure
 on:
   push:
     branches:
-      - preprod
+      - Imouga
 
 jobs:
   build-and-deploy:
