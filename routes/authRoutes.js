@@ -10,7 +10,7 @@ const { userSchema } = require('../utils/validationSchema');
  * /api/auth/register:
  *   post:
  *     summary: Register a new user
- *     tags: [Authentication]
+ *     tags: [Authentication1]
  *     requestBody:
  *       required: true
  *       content:
