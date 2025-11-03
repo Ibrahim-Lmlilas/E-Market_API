@@ -35,3 +35,4 @@ jobs:
         with:
           app-name: mern-demo
           package: .
+          startup-command: npm start
