@@ -17,7 +17,7 @@ class OrderService {
 
 		const cartItems = await CartItem.find({ cart_id: cartId }).populate({
 			path: 'product_id',
-			select: 'price stock category',
+			select: 'price stock category title',
 		});
 
 		if (!cartItems.length) {
@@ -53,7 +53,7 @@ class OrderService {
 	async verifyStockAvailability(cartItems) {
 		for (const item of cartItems) {
 			if (item.quantity > item.product_id.stock) {
-				throw new Error(`Not enough stock for ${item.product_id.name}`);
+				throw new Error(`Not enough stock for product ID: ${item.product_id.title}`);
 			}
 		}
 	}
