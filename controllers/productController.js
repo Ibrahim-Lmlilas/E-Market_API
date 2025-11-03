@@ -50,7 +50,9 @@ class ProductController {
       };
 
       // 🟡 Save in Redis cache
-      await redisClient.set('products', JSON.stringify(responseData));
+      await redisClient.set('products', JSON.stringify(responseData), {
+        EX: 10,
+      });
 
       res.status(200).json(responseData);
     } catch (error) {

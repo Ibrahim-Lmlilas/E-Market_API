@@ -45,7 +45,7 @@ const { cache } = require('../middlewares/CachingMiddleware');
  *       200:
  *         description: List of all published products
  */
-router.get('/v1', cache('products'), productController.getAllProducts);
+router.get('/v1', productController.getAllProducts);
 
 /**
  * @swagger
