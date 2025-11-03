@@ -70,7 +70,7 @@ app.get('/fouad', (req, res) => {
 // ---------------------Routes--------------------------
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to E-Market API',
+    message: 'Welcome to E-Market API Ci/Cd working',
     status: 'Server is running',
     version: '1.0.0',
     documentation: 'http://localhost:3000/api-docs',
@@ -142,7 +142,7 @@ const connectDB = async () => {
 const startServer = async () => {
   await connectDB();
 
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/health`);
   });

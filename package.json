@@ -4,8 +4,8 @@
   "description": "API e-commerce avec Express et MongoDB - gestion des produits et utilisateurs",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=production node server.js",
-    "dev": "NODE_ENV=development nodemon server.js",
+    "start": "cross-env NODE_ENV=production node server.js",
+    "dev": "cross-env NODE_ENV=development nodemon server.js",
     "clear-db": "node scripts/clearDb.js",
     "setup-roles": "node scripts/createRoles.js",
     "setup-users": "node scripts/createUsers.js",
