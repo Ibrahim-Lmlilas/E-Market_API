@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema(
       default: () => uuidv4(),
       unique: true,
       immutable: true, // Cannot be changed after creation
-      index: true,
     },
     firstName: {
       type: String,

@@ -14,9 +14,9 @@ const { cache } = require('../middlewares/CachingMiddleware');
 
 /**
  * @swagger
- * /api/products:
+ * /api/products/v1:
  *   get:
- *     summary: Get all published products (Public) with pagination
+ *     summary: Get all published yaaaaaarbi tkhdam products (Public) with pagination
  *     tags: [Products]
  *     parameters:
  *       - in: query
@@ -45,7 +45,7 @@ const { cache } = require('../middlewares/CachingMiddleware');
  *       200:
  *         description: List of all published products
  */
-router.get('/v1', cache('products'), productController.getAllProducts);
+router.get('/v1', productController.getAllProducts);
 
 /**
  * @swagger

@@ -8,7 +8,6 @@ const couponSchema = new mongoose.Schema(
       default: () => uuidv4(),
       unique: true,
       immutable: true,
-      index: true,
     },
 
     code: {
@@ -41,14 +40,12 @@ const couponSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
       required: [true, 'Category ID is required'],
-      index: true,
     },
 
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       default: null,
-      index: true,
     },
 
     usesLeft: {
@@ -73,7 +70,6 @@ const couponSchema = new mongoose.Schema(
   }
 );
 
-couponSchema.index({ code: 1 }, { unique: true });
 couponSchema.index({ category_id: 1 });
 couponSchema.index({ user_id: 1 });
 

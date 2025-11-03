@@ -1,4 +1,4 @@
-const { redisClient } = require('../server'); // تأكد المسار على حسب مشروعك
+const redisClient = require('../config/redisClient');
 
 const cache = (keyBuilder) => {
   return async (req, res, next) => {

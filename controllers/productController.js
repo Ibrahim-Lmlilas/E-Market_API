@@ -1,7 +1,7 @@
-const Product = require("../models/Product");
-const Category = require("../models/Category");
-const  redisClient  = require('../config/redisClient');
-const mongoose = require("mongoose");
+const Product = require('../models/Product');
+const Category = require('../models/Category');
+const redisClient = require('../config/redisClient');
+const mongoose = require('mongoose');
 const NotificationService = require('../services/NotificationService');
 const User = require('../models/User');
 
@@ -50,7 +50,9 @@ class ProductController {
       };
 
       // 🟡 Save in Redis cache
-      await redisClient.set('products', JSON.stringify(responseData));
+      await redisClient.set('products', JSON.stringify(responseData), {
+        EX: 10,
+      });
 
       res.status(200).json(responseData);
     } catch (error) {
@@ -482,10 +484,10 @@ class ProductController {
       // cache key
       const cacheKey = `search_${column}_${value}`;
 
-      const cachedData = await redisClient.get(cacheKey);
-      if (cachedData) {
-        return res.status(200).json(JSON.parse(cachedData));
-      }
+      // const cachedData = await redisClient.get(cacheKey);
+      // if (cachedData) {
+      //   return res.status(200).json(JSON.parse(cachedData));
+      // }
 
       const product = await Product.findOne({ [column]: value });
 
@@ -501,7 +503,7 @@ class ProductController {
         data: product,
       };
 
-      await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
+      // await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
 
       res.status(200).json(response);
     } catch (error) {

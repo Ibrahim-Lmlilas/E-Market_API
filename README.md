@@ -3,6 +3,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-v18+-green)
 ![Express.js](https://img.shields.io/badge/Express.js-5.1.0-blue)
 ![MongoDB](https://img.shields.io/badge/MongoDB-8.19.1-brightgreen)
+![Redis](https://img.shields.io/badge/Redis-Cache-red)
 ![JWT](https://img.shields.io/badge/JWT-Auth-orange)
 ![License](https://img.shields.io/badge/license-ISC-blue)
 
@@ -70,9 +71,14 @@ API e-commerce complète avec Express.js et MongoDB. Gestion des produits, caté
 
 - **Backend:** Node.js, Express.js
 - **Base de données:** MongoDB, Mongoose
+- **Cache:** Redis (middleware de cache)
 - **Authentification:** JWT (jsonwebtoken), bcryptjs
 - **Documentation:** Swagger UI Express, Swagger JSDoc
-- **Outils:** Nodemon, Dotenv, UUID, Multer
+- **Sécurité:** Helmet, CORS, Rate limiting (express-rate-limit)
+- **Logs:** Winston + morgan (rotation fichiers)
+- **Validation:** Yup (via `validationMiddleware`)
+- **Upload/Images:** Multer, Sharp
+- **Outils dev:** Nodemon, Dotenv, Prettier, ESLint
 
 ---
 
@@ -82,6 +88,7 @@ Avant de commencer, assurez-vous d'avoir installé :
 
 - **Node.js** (v18 ou supérieur) - [Télécharger](https://nodejs.org/)
 - **MongoDB** (local ou cloud) - [Installation](https://www.mongodb.com/try/download/community)
+- **Redis** (cache) - `sudo pacman -S redis` puis `redis-server`
 - **Git** - [Télécharger](https://git-scm.com/)
 - **Postman** (optionnel, pour tester l'API) - [Télécharger](https://www.postman.com/downloads/)
 
@@ -117,6 +124,9 @@ MONGODB_URI=mongodb://localhost:27017/emarket
 # JWT Configuration
 JWT_SECRET=votre_secret_jwt_super_securise_changez_moi
 JWT_EXPIRE=7d
+ 
+# Redis Configuration
+REDIS_URL=redis://localhost:6380
 ```
 
 ⚠️ **Important:** Changez `JWT_SECRET` par une valeur unique et sécurisée en production!
@@ -339,6 +349,117 @@ Une documentation interactive complète est disponible via Swagger UI.
 4. Vous pouvez maintenant tester les routes protégées
 
 ---
+
+## ✅ Mise à jour des endpoints (basée sur le code actuel)
+
+Les routes incluent une version interne (`/v1` ou `/v2`) selon la ressource. Combinez avec les préfixes montés dans `server.js`.
+
+### Auth (`/api/auth`)
+
+- POST `/api/auth/v1/register`
+- POST `/api/auth/v1/login`
+- POST `/api/auth/v1/logout` (auth)
+
+### Categories (`/api/categories`)
+
+- GET `/api/categories/v1`
+- GET `/api/categories/v1/:id`
+- POST `/api/categories/v1` (auth + admin)
+- PUT `/api/categories/v1/:id` (auth + admin)
+- DELETE `/api/categories/v1/:id` (auth + admin)
+
+### Products (`/api/products`)
+
+- GET `/api/products/v1` (pagination + filtres: `page`, `limit`, `category`, `search`)
+- GET `/api/products/v1/:id`
+- GET `/api/products/v1/admin/all` (auth + admin)
+- GET `/api/products/v1/my-products` (auth + seller/admin)
+- POST `/api/products/v1` (auth + seller/admin, upload image)
+- PUT `/api/products/v1/:id` (auth + owner/admin)
+- DELETE `/api/products/v1/:id` (auth + owner/admin)
+- GET `/api/products/search/:column/:value`
+
+### Profiles (`/api/profiles`)
+
+- GET `/api/profiles/v2/me` (auth)
+- PUT `/api/profiles/v2/edit` (auth)
+- PUT `/api/profiles/v2/change-password` (auth)
+
+### Role Requests (`/api/request`)
+
+- POST `/api/request/v2/request-role-change` (auth)
+- GET `/api/request/v2` (auth + admin)
+- POST `/api/request/v2/:id/approve` (auth + admin)
+- POST `/api/request/v2/:id/reject` (auth + admin)
+- POST `/api/request/v2/:id/change-role` (auth + admin)
+
+### Comments (`/api/comment`)
+
+- GET `/api/comment/v2` (auth + admin)
+- GET `/api/comment/v2/product/:productId`
+- POST `/api/comment/v2` (auth)
+- PUT `/api/comment/v2/:id` (auth)
+- DELETE `/api/comment/v2/:id` (auth)
+- GET `/api/comment/v2/seller/my-products` (auth + seller)
+
+### Carts (`/api/v2/carts`)
+
+- GET `/api/v2/carts/user/:userId` (auth)
+- GET `/api/v2/carts/me` (auth)
+- POST `/api/v2/carts/` (auth)
+- DELETE `/api/v2/carts/user/:cartId` (auth)
+- GET `/api/v2/carts/mycart/items` (auth)
+- POST `/api/v2/carts/mycart/items` (auth)
+- GET `/api/v2/carts/user/:cartId/items` (auth)
+- PUT `/api/v2/carts/user/:cartId/items/:cartItemId` (auth)
+- DELETE `/api/v2/carts/user/:cartId/items/:cartItemId` (auth)
+
+### Coupons (`/api/v2/coupons`) [admin]
+
+- GET `/api/v2/coupons/` (auth + admin)
+- GET `/api/v2/coupons/:id` (auth + admin)
+- POST `/api/v2/coupons/` (auth + admin)
+- PUT `/api/v2/coupons/:id` (auth + admin)
+- DELETE `/api/v2/coupons/:id` (auth + admin)
+
+### Orders (`/api/v2/orders`)
+
+- GET `/api/v2/orders/` (auth + admin)
+- GET `/api/v2/orders/:id` (auth + admin)
+- POST `/api/v2/orders/` (auth)
+- PUT `/api/v2/orders/:id` (auth + admin)
+- DELETE `/api/v2/orders/:id` (auth + admin)
+
+---
+
+## ⚡ Cache & Limitation de débit
+
+- Cache Redis activé pour: catégories, produits, commentaires. Démarrer `redis-server` et définir `REDIS_URL`.
+- Limitation de débit par ressource via `middlewares/rateLimiter` (ex.: `/api/auth` plus restrictif).
+
+---
+
+## 🧩 Scripts utiles (complets)
+
+```bash
+npm start            # Production
+npm run dev          # Développement (nodemon)
+
+# Setup & seed
+npm run setup-roles
+npm run setup-users
+npm run setup-categories
+npm run setup-products
+npm run setup-all
+npm run clear-db
+
+# Qualité & tests
+npm test
+npm run test:watch
+npm run test:coverage
+npm run lint
+npm run format
+```
 
 ## 🧪 Tests avec Postman
 
