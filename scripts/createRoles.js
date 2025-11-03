@@ -5,7 +5,7 @@ require('dotenv').config();
 const createRoles = async () => {
   try {
     // Connect to database
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(env.MONGODB_URI);
 
     // Check if roles exist
     await Role.deleteMany({});
