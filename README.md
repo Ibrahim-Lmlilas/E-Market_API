@@ -126,7 +126,7 @@ JWT_SECRET=votre_secret_jwt_super_securise_changez_moi
 JWT_EXPIRE=7d
  
 # Redis Configuration
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://localhost:6380
 ```
 
 ⚠️ **Important:** Changez `JWT_SECRET` par une valeur unique et sécurisée en production!

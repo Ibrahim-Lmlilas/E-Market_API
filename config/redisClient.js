@@ -6,11 +6,15 @@ const redisClient = redis.createClient({
 
 redisClient.on('error', (err) => console.error('❌ Redis Error:', err));
 
+// Try to connect to Redis (will continue gracefully if fails)
 (async () => {
-  
+  try {
     await redisClient.connect();
     console.log('✅ Connected to Redis');
- 
+  } catch (err) {
+    console.error('❌ Redis connection failed:', err.message);
+    console.log('⚠️  Continuing without Redis cache...');
+  }
 })();
 
 module.exports = redisClient;

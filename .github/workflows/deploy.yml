@@ -3,7 +3,7 @@ name: Deploy Express API to Azure
 on:
   push:
     branches:
-      - Imouga
+      - preprod
 
 jobs:
   build-and-deploy:
@@ -34,4 +34,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: mern-demo
-          package: .
+          package: ${{ github.workspace }}
+          startup-command: 'npm start'
