@@ -16,7 +16,7 @@ const { cache } = require('../middlewares/CachingMiddleware');
  * @swagger
  * /api/products/v1:
  *   get:
- *     summary: Get all published test products (Public) with pagination
+ *     summary: Get all published yaaaaaarbi tkhdam products (Public) with pagination
  *     tags: [Products]
  *     parameters:
  *       - in: query
