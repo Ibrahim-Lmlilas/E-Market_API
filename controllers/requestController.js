@@ -33,12 +33,10 @@ exports.createRequest = async (req, res) => {
       status: 'PENDING',
     });
     if (existingRequest) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: 'You already have a pending request',
-        });
+      return res.status(400).json({
+        success: false,
+        message: 'You already have a pending request',
+      });
     }
 
     const request = await Request.create({

@@ -39,7 +39,9 @@ describe('Authentication Tests', function () {
         password: 'password123',
       };
 
-      const res = await request(app).post('/api/auth/v1/register').send(userData);
+      const res = await request(app)
+        .post('/api/auth/v1/register')
+        .send(userData);
 
       expect(res.status).to.equal(201);
       expect(res.body).to.have.property('success', true);
@@ -72,7 +74,9 @@ describe('Authentication Tests', function () {
         password: 'password123',
       };
 
-      const res = await request(app).post('/api/auth/v1/register').send(userData);
+      const res = await request(app)
+        .post('/api/auth/v1/register')
+        .send(userData);
 
       expect(res.status).to.equal(400);
     });
@@ -86,7 +90,9 @@ describe('Authentication Tests', function () {
         password: 'password123',
       };
 
-      const res = await request(app).post('/api/auth/v1/register').send(userData);
+      const res = await request(app)
+        .post('/api/auth/v1/register')
+        .send(userData);
 
       expect(res.status).to.equal(400);
     });
@@ -97,7 +103,9 @@ describe('Authentication Tests', function () {
         // Missing lastName, nickname, email, password
       };
 
-      const res = await request(app).post('/api/auth/v1/register').send(userData);
+      const res = await request(app)
+        .post('/api/auth/v1/register')
+        .send(userData);
 
       expect(res.status).to.equal(400);
     });

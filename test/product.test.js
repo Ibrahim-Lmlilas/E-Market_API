@@ -128,7 +128,10 @@ describe('Product Tests', function () {
       expect(res.body).to.have.property('responseData');
       expect(res.body.responseData).to.have.property('success', true);
       expect(res.body.responseData).to.have.property('data');
-      expect(res.body.responseData.data).to.have.property('title', 'Test Product');
+      expect(res.body.responseData.data).to.have.property(
+        'title',
+        'Test Product'
+      );
       expect(res.body.responseData.data).to.have.property('price', 150);
     });
 
@@ -336,7 +339,9 @@ describe('Product Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app).delete(`/api/products/v1/${testProduct._id}`);
+      const res = await request(app).delete(
+        `/api/products/v1/${testProduct._id}`
+      );
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);

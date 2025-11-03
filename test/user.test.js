@@ -89,7 +89,9 @@ describe('User Tests', function () {
         firstName: 'Updated',
       };
 
-      const res = await request(app).put('/api/profiles/v2/edit').send(updateData);
+      const res = await request(app)
+        .put('/api/profiles/v2/edit')
+        .send(updateData);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);

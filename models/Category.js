@@ -7,7 +7,7 @@ const categorySchema = new mongoose.Schema(
       type: String,
       default: () => uuidv4(),
       unique: true,
-      immutable: true
+      immutable: true,
     },
 
     title: {

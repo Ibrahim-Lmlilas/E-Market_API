@@ -4,7 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const morgan = require('morgan');
 require('dotenv').config({
-  path: `.env.${process.env.NODE_ENV || 'development'}`
+  path: `.env.${process.env.NODE_ENV || 'development'}`,
 });
 const securityMiddleware = require('./middlewares/security');
 

@@ -79,7 +79,9 @@ describe('Category Tests', function () {
       testCategory = new Category({ title: `Test Category-${Date.now()}` });
       await testCategory.save();
 
-      const res = await request(app).get(`/api/categories/v1/${testCategory._id}`);
+      const res = await request(app).get(
+        `/api/categories/v1/${testCategory._id}`
+      );
 
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property('success', true);
@@ -128,7 +130,9 @@ describe('Category Tests', function () {
         title: `New Category-${Date.now()}`,
       };
 
-      const res = await request(app).post('/api/categories/v1').send(categoryData);
+      const res = await request(app)
+        .post('/api/categories/v1')
+        .send(categoryData);
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);

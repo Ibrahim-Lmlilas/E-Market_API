@@ -8,7 +8,11 @@ class CartService {
   }
 
   async getCartByUserId(userId) {
-    const cart = await Cart.findOne({ user_id: userId, isDeleted: false, type: 'Cart'});
+    const cart = await Cart.findOne({
+      user_id: userId,
+      isDeleted: false,
+      type: 'Cart',
+    });
     return cart;
   }
 

@@ -134,12 +134,10 @@ class OrderController {
       const updatedOrder = await OrderService.updateOrderStatus(id, status);
 
       if (!updatedOrder) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: 'Order not found or cannot be updated',
-          });
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found or cannot be updated',
+        });
       }
 
       // Notify the user
@@ -174,12 +172,10 @@ class OrderController {
       const cancelledOrder = await OrderService.cancelOrder(userId, id);
 
       if (!cancelledOrder) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: 'Order not found or cannot be cancelled',
-          });
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found or cannot be cancelled',
+        });
       }
 
       // Notify the user
@@ -213,12 +209,10 @@ class OrderController {
       const deleted = await OrderService.deleteOrder(id);
 
       if (!deleted) {
-        return res
-          .status(404)
-          .json({
-            success: false,
-            message: 'Order not found or already deleted',
-          });
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found or already deleted',
+        });
       }
 
       res.status(200).json({

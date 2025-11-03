@@ -361,7 +361,9 @@ describe('Cart Tests', function () {
     });
 
     it('should return 401 without authentication', async function () {
-      const res = await request(app).delete(`/api/v2/carts/user/${testCart._id}`);
+      const res = await request(app).delete(
+        `/api/v2/carts/user/${testCart._id}`
+      );
 
       expect(res.status).to.equal(401);
       expect(res.body).to.have.property('success', false);
