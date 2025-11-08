@@ -1,0 +1,148 @@
+classDiagram
+  direction LR
+
+  class User {
+    +_id: ObjectId
+    +uuid: string
+    +firstName: string
+    +lastName: string
+    +nickname: string
+    +email: string
+    +password: string
+    +isDeleted: boolean
+    +deletedAt: date
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class Role {
+    +_id: ObjectId
+    +uuid: string
+    +name: string
+    +isActive: boolean
+    +isDeleted: boolean
+    +deletedAt: date
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class Category {
+    +_id: ObjectId
+    +uuid: string
+    +title: string
+    +slug: string
+    +isActive: boolean
+    +isDeleted: boolean
+    +deletedAt: date
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class Product {
+    +_id: ObjectId
+    +uuid: string
+    +title: string
+    +description: string
+    +price: number
+    +stock: number
+    +images: json
+    +promotion: json
+    +status: string
+    +isVisible: boolean
+    +isDeleted: boolean
+    +deletedAt: date
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class Cart {
+    +_id: ObjectId
+    +uuid: string
+    +coupon: string
+    +type: string
+    +isDeleted: boolean
+    +deletedAt: date
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class CartItem {
+    +_id: ObjectId
+    +uuid: string
+    +quantity: number
+    +price: number
+    +isDeleted: boolean
+    +deletedAt: date
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class Order {
+    +_id: ObjectId
+    +uuid: string
+    +totalPrice: number
+    +discountApplied: number
+    +couponCode: string
+    +status: string
+    +isDeleted: boolean
+    +deletedAt: date
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class Comment {
+    +_id: ObjectId
+    +commentaire: string
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class Coupon {
+    +_id: ObjectId
+    +uuid: string
+    +code: string
+    +type: string
+    +discount: number
+    +expirationDate: date
+    +usesLeft: number
+    +isDeleted: boolean
+    +deletedAt: date
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  class Notification {
+    +_id: ObjectId
+    +uuid: string
+    +message: string
+    +status: string
+    +created_at: date
+  }
+
+  class Request {
+    +_id: ObjectId
+    +uuid: string
+    +status: string
+    +handledAt: date
+    +isDirectChange: boolean
+    +createdAt: date
+    +updatedAt: date
+  }
+
+  %% Associations with multiplicities
+  Role "1" -- "0..*" User : assigned
+  User "1" -- "0..*" Product : sells
+  Category "1" -- "0..*" Product : categorizes
+  User "1" -- "0..*" Cart : owns
+  Cart "1" -- "1..*" CartItem : contains
+  Product "1" -- "0..*" CartItem : in
+  User "1" -- "0..*" Comment : writes
+  Product "1" -- "0..*" Comment : has
+  Cart "1" -- "1" Order : converted_to
+  Category "1" -- "0..*" Coupon : scope
+  User "0..1" -- "0..*" Coupon : owns
+  User "1" -- "0..*" Notification : receives
+  User "1" -- "0..*" Request : submits
+  Role "1" -- "0..*" Request : currentRole
+  Role "1" -- "0..*" Request : requestedRole
+  User "0..1" -- "0..*" Request : handles

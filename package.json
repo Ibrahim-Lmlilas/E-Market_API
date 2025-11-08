@@ -4,10 +4,22 @@
   "description": "API e-commerce avec Express et MongoDB - gestion des produits et utilisateurs",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "cross-env NODE_ENV=production node server.js",
+    "dev": "cross-env NODE_ENV=development nodemon server.js",
+    "clear-db": "node scripts/clearDb.js",
     "setup-roles": "node scripts/createRoles.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup-users": "node scripts/createUsers.js",
+    "setup-categories": "node scripts/createCategories.js",
+    "setup-products": "node scripts/createProducts.js",
+    "setup-all": "npm run setup-roles && npm run setup-users && npm run setup-categories && npm run setup-products",
+    "clear-setup": "npm run clear-db && npm run setup-roles && npm run setup-users && npm run setup-categories && npm run setup-products",
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "test:coverage": "nyc mocha",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down -v"
   },
   "repository": {
     "type": "git",
@@ -22,16 +34,48 @@
   "homepage": "https://github.com/Ibrahim-Lmlilas/E-Market_API#readme",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
+    "morgan": "^1.10.1",
     "multer": "^2.0.2",
-    "swagger-jsdoc": "^6.2.8",
+    "redis": "^5.8.3",
+    "sharp": "^0.33.5",
+    "swagger-jsdoc": "^3.7.0",
     "swagger-ui-express": "^5.0.1",
-    "uuid": "^13.0.0"
+    "uuid": "^8.3.2",
+    "winston": "^3.18.3",
+    "winston-daily-rotate-file": "^5.0.0",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@eslint/js": "^9.38.0",
+    "chai": "^4.5.0",
+    "chai-http": "^5.1.2",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0",
+    "mocha": "^11.7.4",
+    "mongodb-memory-server": "^9.5.0",
+    "nodemon": "^3.1.10",
+    "nyc": "^17.1.0",
+    "prettier": "^3.6.2",
+    "supertest": "^7.1.4"
+  },
+  "nyc": {
+    "include": [
+      "controllers/*.js",
+      "models/*.js",
+      "services/*.js"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "all": true
   }
 }

@@ -1,0 +1,162 @@
+erDiagram
+  USER ||--o{ PRODUCT : "sells"
+  USER ||--o{ CART : "owns"
+  USER ||--o{ COMMENT : "writes"
+  USER ||--o{ NOTIFICATION : "receives"
+  USER ||--o{ ORDER : "places"
+  ROLE ||--o{ USER : "assigned"
+  CATEGORY ||--o{ PRODUCT : "categorizes"
+  PRODUCT ||--o{ CART_ITEM : "in"
+  CART ||--o{ CART_ITEM : "contains"
+  PRODUCT ||--o{ COMMENT : "has"
+  CART ||--|| ORDER : "converted_to"
+  CATEGORY ||--o{ COUPON : "scope"
+  USER ||--o{ REQUEST : "submits"
+  ROLE ||--o{ REQUEST : "currentRole"
+  ROLE ||--o{ REQUEST : "requestedRole"
+  USER ||--o{ REQUEST : "handles"
+
+  USER {
+    string _id PK
+    string uuid
+    string firstName
+    string lastName
+    string nickname
+    string email
+    string password
+    objectId role FK
+    boolean isDeleted
+    date deletedAt
+    date createdAt
+    date updatedAt
+  }
+
+  ROLE {
+    string _id PK
+    string uuid
+    string name
+    boolean isActive
+    boolean isDeleted
+    date deletedAt
+    date createdAt
+    date updatedAt
+  }
+
+  CATEGORY {
+    string _id PK
+    string uuid
+    string title
+    string slug
+    boolean isActive
+    boolean isDeleted
+    date deletedAt
+    date createdAt
+    date updatedAt
+  }
+
+  PRODUCT {
+    string _id PK
+    string uuid
+    string title
+    string description
+    number price
+    number stock
+    objectId category FK
+    objectId seller FK
+    json images
+    json promotion
+    string status
+    boolean isVisible
+    boolean isDeleted
+    date deletedAt
+    date createdAt
+    date updatedAt
+  }
+
+  CART {
+    string _id PK
+    string uuid
+    objectId user_id FK
+    string coupon
+    string type
+    boolean isDeleted
+    date deletedAt
+    date createdAt
+    date updatedAt
+  }
+
+  CART_ITEM {
+    string _id PK
+    string uuid
+    objectId cart_id FK
+    objectId product_id FK
+    number quantity
+    number price
+    boolean isDeleted
+    date deletedAt
+    date createdAt
+    date updatedAt
+  }
+
+  ORDER {
+    string _id PK
+    string uuid
+    objectId user_id FK
+    objectId cart_id FK
+    number totalPrice
+    number discountApplied
+    string couponCode
+    string status
+    boolean isDeleted
+    date deletedAt
+    date createdAt
+    date updatedAt
+  }
+
+  COMMENT {
+    string _id PK
+    objectId user_id FK
+    objectId product_id FK
+    string commentaire
+    date createdAt
+    date updatedAt
+  }
+
+  COUPON {
+    string _id PK
+    string uuid
+    string code
+    string type
+    number discount
+    date expirationDate
+    objectId category_id FK
+    objectId user_id FK
+    number usesLeft
+    boolean isDeleted
+    date deletedAt
+    date createdAt
+    date updatedAt
+  }
+
+  NOTIFICATION {
+    string _id PK
+    string uuid
+    objectId user_id FK
+    string message
+    string status
+    date created_at
+  }
+
+  REQUEST {
+    string _id PK
+    string uuid
+    objectId user FK
+    objectId currentRole FK
+    objectId requestedRole FK
+    string status
+    objectId handledBy FK
+    date handledAt
+    boolean isDirectChange
+    date createdAt
+    date updatedAt
+  }

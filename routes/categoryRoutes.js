@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 const { protect, adminOnly } = require('../middlewares/auth');
+const validator = require('../middlewares/validationMiddleware');
+const { CategorySchema } = require('../utils/validationSchema');
+const { cache } = require('../middlewares/CachingMiddleware');
 
 /**
  * @swagger
@@ -28,7 +31,7 @@ const { protect, adminOnly } = require('../middlewares/auth');
  *                   items:
  *                     $ref: '#/components/schemas/Category'
  */
-router.get('/', categoryController.getAllCategories);
+router.get('/v1', cache('categories'), categoryController.getAllCategories);
 
 /**
  * @swagger
@@ -63,7 +66,11 @@ router.get('/', categoryController.getAllCategories);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.get('/:id', categoryController.getCategoryById);
+router.get(
+  '/v1/:id',
+  cache((req) => `category_${req.params.id}`),
+  categoryController.getCategoryById
+);
 
 /**
  * @swagger
@@ -100,7 +107,13 @@ router.get('/:id', categoryController.getCategoryById);
  *       403:
  *         description: Forbidden (not admin)
  */
-router.post('/', protect, adminOnly, categoryController.createCategory);
+router.post(
+  '/v1',
+  protect,
+  adminOnly,
+  validator.validate(CategorySchema),
+  categoryController.createCategory
+);
 
 /**
  * @swagger
@@ -133,7 +146,13 @@ router.post('/', protect, adminOnly, categoryController.createCategory);
  *       404:
  *         description: Category not found
  */
-router.put('/:id', protect, adminOnly, categoryController.updateCategory);
+router.put(
+  '/v1/:id',
+  protect,
+  adminOnly,
+  validator.validate(CategorySchema),
+  categoryController.updateCategory
+);
 
 /**
  * @swagger
@@ -160,6 +179,6 @@ router.put('/:id', protect, adminOnly, categoryController.updateCategory);
  *       404:
  *         description: Category not found
  */
-router.delete('/:id', protect, adminOnly, categoryController.deleteCategory);
+router.delete('/v1/:id', protect, adminOnly, categoryController.deleteCategory);
 
 module.exports = router;
